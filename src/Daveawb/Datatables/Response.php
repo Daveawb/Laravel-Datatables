@@ -17,10 +17,17 @@ class Response {
         {
             foreach($this->columns as $key => $column)
             {
-                $filtered[$rowKey][$key] = $result[$column->name];
+                $filtered[$rowKey][$column->mDataProp] = $result->{$column->name};
             }
         }
         
-        dd($filtered);
+        $this->results['aaData'] = $filtered;
+    }
+    
+    public function get()
+    {
+        $this->filter();
+        
+        return $this->results;
     }
 }

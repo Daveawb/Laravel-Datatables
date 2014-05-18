@@ -29,7 +29,7 @@ class Factory {
         
         foreach($this->sorting as $sort)
         {
-            if ($sort[0] === $key)
+            if ($sort[0] === $key && $data['bSortable'])
             {
                 $data['sortable'] = true;
                 $data['sortDirection'] = $sort[1];

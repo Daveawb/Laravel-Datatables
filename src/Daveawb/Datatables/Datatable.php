@@ -6,6 +6,7 @@ use Daveawb\Datatables\Columns\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as FluentBuilder;
+use Illuminate\Http\JsonResponse;
 
 use ErrorException;
 
@@ -148,11 +149,11 @@ class Datatable implements DatatableInterface {
         return $this->response($query->get());
     }
     
-    public function response($results)
+    protected function response($results)
     {
-        //dd($results);
         $response = new Response($this->columns, $results);
-        $response->filter();
+        
+        return new JsonResponse($response->get());
     }
 
     /**

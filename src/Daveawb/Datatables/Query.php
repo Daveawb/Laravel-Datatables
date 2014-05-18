@@ -57,9 +57,7 @@ class Query {
     {
         $this->build();
         
-        $data = ($this->query instanceof Illuminate\Database\Eloquent\Builder) ?
-            $this->query->get()->toArray() :
-            $this->query->get();
+        $data = $this->query->get();
             
         return array(
             "sEcho" => $input->sEcho,

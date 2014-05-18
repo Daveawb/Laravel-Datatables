@@ -167,8 +167,8 @@ class DatatableTest extends DatatablesTestCase {
             "sSearch_1" => "",
             "bRegex_0" => false,
             "bRegex_1" => false,
-            "bSortable_0" => false,
-            "bSortable_1" => false,
+            "bSortable_0" => true,
+            "bSortable_1" => true,
             "iSortingCols" => 1,
             "iSortCol_0" => 1,
             "sSortDir_0" => "desc",
@@ -182,14 +182,14 @@ class DatatableTest extends DatatablesTestCase {
         
         $datatable = new Daveawb\Datatables\Datatable($input, new Daveawb\Datatables\Columns\Factory());
         
-        $datatable->query(DB::table('content'));
+        $datatable->model(new UserModel());
         
         $datatable->columns(array(
-            "id",
-            "title"
+            "first_name",
+            "last_name"
         ));
         
-        $datatable->result();
+        $result = $datatable->result();
     }
 
 }
