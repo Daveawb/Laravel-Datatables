@@ -4,7 +4,6 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
 	
 	protected $testData = array(
         "sEcho" => 1,
-        "aaData" => 0,
         "iDisplayLength" => 10,
         "iDisplayStart" => 0,
         "iColumns" => 2,
@@ -85,34 +84,42 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
 		$this->setupDatabase();
 	}
 	
-	/**
-	 * Set a protected or private method to be accessible in this test
-	 * @param {String} method name to set as accessible
-	 */
-	protected static function getMethod($class, $method)
+	public function getDefaultProperty($class, $property)
 	{
-		$class = static::getReflection($class);
-		$method = $class->getMethod($method);
-		$method->setAccessible(true);
-		return $method;
-	}
-	
-	protected static function getProperty($class, $property)
-	{
-		$class = static::getReflection($class);
+		$class = $this->getReflection($class);
 		$properties = $class->getDefaultProperties();
 		return $properties[$property];
-	}
-	
-	protected static function setProperty($class, $property, $value)
-	{
-		$property = new ReflectionProperty(get_class($class), $property);
-	    $property->setValue($class, $value);
-		return $class;
-	}
-	
-	private static function getReflection($class)
-	{
-		return new ReflectionClass($class);
-	}
+	}    
+    
+    public function getMethod($class, $method)
+    {
+        $reflection = $this->getReflection($class);
+        $method = $reflection->getMethod($method);
+        $method->setAccessible(true);
+
+        return $method;
+    }
+
+    public function getProperty($class, $property)
+    {
+        $reflection = $this->getReflection($class);
+        $property = $reflection->getProperty($property);
+        $property->setAccessible(true);
+
+        return $property->getValue($class);
+    }
+
+    public function setProperty($class, $property, $value)
+    {
+        $reflection = $this->getReflection($class);
+        $property = $reflection->getProperty($property);
+        $property->setAccessible(true);
+
+        return $property->setValue($class, $value);
+    }
+
+    private function getReflection($class)
+    {
+        return new ReflectionClass($class);
+    }
 }

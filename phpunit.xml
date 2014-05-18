@@ -7,8 +7,8 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="false"
-         syntaxCheck="false"
+         stopOnFailure="true"
+         syntaxCheck="true"
 >
     <testsuites>
         <testsuite name="laravel">
@@ -16,6 +16,9 @@
         </testsuite>
         <testsuite name="datatable">
             <directory suffix=".php">./tests/datatable</directory>
+        </testsuite>
+        <testsuite name="columns">
+            <directory suffix=".php">./tests/columns</directory>
         </testsuite>
     </testsuites>
 </phpunit>
