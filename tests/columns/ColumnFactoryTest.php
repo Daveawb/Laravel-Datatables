@@ -34,7 +34,7 @@ class ColumnFactoryTest extends DatatablesTestCase {
         $this->assertFalse($column->bSearchable);
         $this->assertFalse($column->bSortable);
         $this->assertFalse($column->bRegex);
-        $this->assertEquals($colum->sSearch, "");
+        $this->assertEquals($column->sSearch, "");
         $this->assertFalse($column->sortable);
         $this->assertEquals($column->sortDirection, "asc");
     }

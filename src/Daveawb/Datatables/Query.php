@@ -60,7 +60,7 @@ class Query {
         $data = $this->query->get();
             
         return array(
-            "sEcho" => $input->sEcho,
+            "sEcho" => $this->input->sEcho,
             "aaData" => $data,
             "iTotalDisplayRecords" => $this->filteredCount,
             "iTotalRecords" => $this->totalCount
