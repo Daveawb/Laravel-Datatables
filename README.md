@@ -75,6 +75,7 @@ $datatable->query(DB::table('users'));
 - Multiple fields per column
 - A driver interface to allow custom database drivers to be used such as MongoDb, Cassandra or CouchDB instead of Eloquent/Fluent.
 
-#What can you expect from this project?
-- Continuous maintenance
-- Fast responses to issues
+#Testing
+There are a full suite of tests written to make sure that this project works as expected. If you want to run the tests you will need to be running on a Linux OS with SQLite3 and PHPUnit. The tests are portable to mySQL however as it stands there is no support for it in the project.
+
+If you wish to contribute to the project only pull requests that have been properly tested and commented will be accepted.
