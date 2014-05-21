@@ -176,7 +176,7 @@ class Input {
      */
     protected function applyValue($value)
     {
-        $fetched = $this->request->get($value, null);
+        $fetched = $this->request->get($value);
 
         if (is_null($fetched))
             throw new InputMissingException(sprintf("%s was missing from the input", $value));
