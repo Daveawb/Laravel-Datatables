@@ -2,7 +2,7 @@ Laravel-Datatables
 ==================
 
 #Introduction
-This project is aimed at anyone using the fantastic DataTables jquery plugin written by [SpryMedia](http://sprymedia.co.uk/). It was written originally for dataTables 1.9.x, however since 1.10.x has now been released with a new API and data structure there will be updates to allow you to make use of the new syntax in the near future. If you haven't used datatables before check it out at [Datatables.net](http://datatables.net/).
+This project is aimed at anyone using the fantastic dataTables jQuery plugin written by [SpryMedia](http://sprymedia.co.uk/). It was written originally for dataTables 1.9.x, however since 1.10.x has now been released with a new API and data structure there will be updates to allow you to make use of the new syntax in the near future. If you haven't used datatables before check it out at [Datatables.net](http://datatables.net/).
 
 For the mean time you will need to use the old 1.9.x API that is still compatable with 1.10.x. You can find the docs at [the legacy Datatables site](http://legacy.datatables.net/).
 
@@ -69,7 +69,7 @@ $datatable->query(DB::table('users'));
 ** Note you don't need to pass in a model and a query **
 
 #Roadmap
-- Continued development until the project is production ready
+- Support for dataTables 1.10.x options
 - Column interpretation language for manipulating column data as well as concatenating multiple fields
 - A query extension allowing for query manipulation after datatables has taken a count of the fields in the database
 - Multiple fields per column
