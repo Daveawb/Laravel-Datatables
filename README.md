@@ -18,7 +18,7 @@ Add the following to your composer.json file
 ````json
 {
     "require": {
-        "Daveawb\Datatables" : "dev-master"
+        "daveawb/datatables": "v0.1.0-beta"
     },
 }
 ````
