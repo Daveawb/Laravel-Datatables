@@ -13,8 +13,8 @@ use ErrorException;
 class Datatable implements DatatableInterface {
     
     /**
-     * Instance of the column factory
-     * @var {Object} Daveawb\Datatables\Columns\Factory
+     * Instance of the input
+     * @var {Object} Daveawb\Datatables\Input
      */
     protected $input;
     
