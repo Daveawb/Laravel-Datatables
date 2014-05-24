@@ -40,7 +40,7 @@ Add the following to your `config/app.php` alias' array.
 
 #Basic Usage
 
-````
+````php
 $datatable = App::make("Daveawb\Datatables\Datatable");
 
 //The model method will accept an instance of Illuminate\Database\Eloquent\Model
