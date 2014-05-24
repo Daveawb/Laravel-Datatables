@@ -159,7 +159,7 @@ class DatatableTest extends DatatablesTestCase {
             "iDisplayLength" => 10,
             "iDisplayStart" => 0,
             "iColumns" => 2,
-            "sSearch" => "",
+            "sSearch" => "Barry",
             "bRegex" => false,
             "bSearchable_0" => false,
             "bSearchable_1" => false,
@@ -182,7 +182,9 @@ class DatatableTest extends DatatablesTestCase {
         
         $datatable = new Daveawb\Datatables\Datatable($input, new Daveawb\Datatables\Columns\Factory());
         
-        $datatable->model(new UserModel());
+        $model = new UserModel();
+		
+        $datatable->model($model->select('username', 'first_name', 'last_name'));
         
         $datatable->columns(array(
             "first_name",

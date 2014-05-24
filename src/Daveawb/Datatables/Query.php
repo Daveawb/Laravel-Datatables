@@ -3,12 +3,15 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as Fluent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 
 use ErrorException;
 
 class Query {
     
     protected $query;
+	
+	protected $builders = array();
     
     public function __construct($query, Input $input, array $columns)
     {
@@ -29,22 +32,14 @@ class Query {
         $this->query = $query;
         $this->input = $input;
         $this->columns = $columns;
+		
+    	$this->cacheQuery('initial');
     }
     
     protected function build()
     {
-    	// First we need to cache the aggregate query and columns
-    	$aggregate = $this->query->aggregate;
-		$columns = $this->query->columns;
+        $q = $this->query;
 		
-        $this->totalCount = $this->query->count();
-		
-		$q = $this->query;
-		
-		// Re-populate the query with prior query data
-		$q->aggregate = $aggregate;
-		$q->columns = $columns;
-        
         foreach($this->columns as $key => $column)
         {
             if ( ! empty($column->sSearch) ) 
@@ -58,15 +53,7 @@ class Query {
             }
         }
         
-		// We need to cache the aggregate query and columns again
-    	$aggregate = $this->query->aggregate;
-		$columns = $this->query->columns;
-		
-        $this->filteredCount = $this->query->count();
-		
-		// and Re-populate the query with prior query data again
-		$q->aggregate = $aggregate;
-		$q->columns = $columns;
+		$this->cacheQuery('result');
         
         return $q->skip($this->input->iDisplayStart)->limit($this->input->iDisplayLength);
     }
@@ -74,12 +61,41 @@ class Query {
     public function get()
     {
         $data = $this->build()->get();
-     	       
+		
         return array(
             "sEcho" => $this->input->sEcho,
             "aaData" => $data,
-            "iTotalDisplayRecords" => $this->filteredCount,
-            "iTotalRecords" => $this->totalCount
+            "iTotalDisplayRecords" => $this->getFilteredCount(),
+            "iTotalRecords" => $this->getTotalCount()
         );
     }
+	
+	protected function cacheQuery($ns)
+	{
+		$query = $this->query;
+		
+		if ($query instanceof \Illuminate\Database\Eloquent\Builder)
+			$query = $query->getQuery();
+
+		$this->builders[$ns] = clone($query);
+	}
+
+	
+	protected function getTotalCount()
+	{
+		$query = $this->builders['initial'];
+		
+		$query = $query->addSelect(new Expression('count(*) as dttotalcount'));
+
+		return (int) $query->first()->dttotalcount;
+	}
+	
+	protected function getFilteredCount()
+	{
+		$query = $this->builders['result'];
+			
+		$query = $query->addSelect(new Expression('count(*) as dtfilteredcount'));
+		
+		return (int) $query->first()->dtfilteredcount;
+	}
 }
