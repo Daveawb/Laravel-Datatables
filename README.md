@@ -15,7 +15,7 @@ For the mean time you will need to use the old 1.9.x API that is still compatabl
 ##Composer
 Add the following to your composer.json file
 
-````
+````json
 {
     "require": {
         "Daveawb\Datatables" : "dev-master"
@@ -61,14 +61,14 @@ return $datatable->result();
 
 You can also pass in an instance of a query builder as well if you like to create pre built base queries.
 
-````
+````php
 $user = new User();
 $datatable->model($user->with('roles'));
 ````
 
 If you don't want to use Eloquent models. You can pass in an instance of a query builder instead.
 
-````
+````php
 $datatable->query(DB::table('users'));
 ````
 ** Note you don't need to pass in a model and a query **
