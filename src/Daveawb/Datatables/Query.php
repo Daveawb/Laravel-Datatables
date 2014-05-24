@@ -33,9 +33,17 @@ class Query {
     
     protected function build()
     {
+    	// First we need to cache the aggregate query and columns
+    	$aggregate = $this->query->aggregate;
+		$columns = $this->query->columns;
+		
         $this->totalCount = $this->query->count();
 		
 		$q = $this->query;
+		
+		// Re-populate the query with prior query data
+		$q->aggregate = $aggregate;
+		$q->columns = $columns;
         
         foreach($this->columns as $key => $column)
         {
@@ -50,17 +58,23 @@ class Query {
             }
         }
         
+		// We need to cache the aggregate query and columns again
+    	$aggregate = $this->query->aggregate;
+		$columns = $this->query->columns;
+		
         $this->filteredCount = $this->query->count();
+		
+		// and Re-populate the query with prior query data again
+		$q->aggregate = $aggregate;
+		$q->columns = $columns;
         
-        $this->query = $q->skip($this->input->iDisplayStart)->limit($this->input->iDisplayLength);
+        return $q->skip($this->input->iDisplayStart)->limit($this->input->iDisplayLength);
     }
     
     public function get()
     {
-        $this->build();
-        
-        $data = $this->query->get();
-            
+        $data = $this->build()->get();
+     	       
         return array(
             "sEcho" => $this->input->sEcho,
             "aaData" => $data,
