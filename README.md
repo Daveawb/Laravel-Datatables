@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Daveawb/Laravel-Datatables.svg?branch=master)](https://travis-ci.org/Daveawb/Laravel-Datatables)
+
 Laravel-Datatables
 ==================
 
