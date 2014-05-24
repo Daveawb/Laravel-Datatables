@@ -1,7 +1,7 @@
 <?php
 namespace Daveawb\Datatables
 {
-    use Exception; 
+    use Exception;
 
     class DatatablesException extends Exception {
     }

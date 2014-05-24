@@ -34,23 +34,25 @@ class Query {
     protected function build()
     {
         $this->totalCount = $this->query->count();
+		
+		$q = $this->query;
         
         foreach($this->columns as $key => $column)
         {
             if ( ! empty($column->sSearch) ) 
             {
-                $this->query->orWhere($column->name, 'LIKE', '%' . $column->sSearch . '%');
+                $q = $q->orWhere($column->name, 'LIKE', '%' . $column->sSearch . '%');
             }
             
             if ( $column->sortable )
             {
-                $this->query->orderBy($column->name, $column->sortDirection);
+                $q = $q->orderBy($column->name, $column->sortDirection);
             }
         }
         
         $this->filteredCount = $this->query->count();
         
-        $this->query->skip($this->input->iDisplayStart)->limit($this->input->iDisplayLength);
+        $this->query = $q->skip($this->input->iDisplayStart)->limit($this->input->iDisplayLength);
     }
     
     public function get()
