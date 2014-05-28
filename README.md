@@ -7,6 +7,16 @@ This project is aimed at anyone using the fantastic dataTables jQuery plugin wri
 
 For the mean time you will need to use the old 1.9.x API that is still compatable with 1.10.x. You can find the docs at [the legacy Datatables site](http://legacy.datatables.net/).
 
+## Supported datatables components
+- Client side column re-ordering
+- Per column sorting
+- Global search
+- Search in a specific column
+- Set number of rows to return
+- Filtered and Total rows
+
+All components above work without any extra intervention. In the next release there will be the ability to send back named attributes per row such as `DT_ROWCLASS` and any other data you want to return, per row or if you want in the top level of the returned JSON.
+
 #Requirements
 - >= PHP 5.4
 - >= Laravel 4.1.*
@@ -23,6 +33,7 @@ Add the following to your composer.json file
 }
 ````
 
+##Add the Laravel service provider
 Once you have run a `composer update` you will need to add the service provider.
 
 Open up `config/app.php` and add the followng to the service providers array.
@@ -30,7 +41,7 @@ Open up `config/app.php` and add the followng to the service providers array.
 ````
 "Daveawb\Datatables\DatatablesServiceProvider"
 ````
-#Optional Facade
+##Add the Laravel facade (optional)
 
 Add the following to your `config/app.php` alias' array.
 
