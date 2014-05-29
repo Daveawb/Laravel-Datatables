@@ -71,7 +71,7 @@ Route::post('datatable', function()
 });
 ````
 
-The columns method takes an array in the order you wish to send back data to the client. Each field maps to a field in the database available from the query you've injected.
+The columns method takes an array in the order you wish to send data back to the client. Each field maps to a field in the database available from the query you've injected.
 
 The model method will take an instance of either:
 `Illuminate\Database\Eloquent\Model` or `Illuminate\Database\Eloquent\Builder`
@@ -98,7 +98,7 @@ Route::post('datatable', function()
 });
 ````
 
-As the model and query methods will also accept builder instances you can pass build a predefines query before inserting it into the datatables package.
+As the model and query methods accept builder instances you can pass a predefined query before inserting it into the datatables package.
 
 ````php
 $user = new User();
