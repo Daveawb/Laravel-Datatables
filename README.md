@@ -15,7 +15,7 @@ For the mean time you will need to use the old 1.9.x API that is still compatabl
 - Set number of rows to return
 - Filtered and Total rows
 
-All components above work without any extra intervention. In the next release there will be the ability to send back named attributes per row such as `DT_ROWCLASS` and any other data you want to return, per row or if you want in the top level of the returned JSON.
+All components above work without any extra configuration. In a future release there will be the ability to send back named attributes per row such as `DT_RowClass` and any other data you want to return by row or if you want in the top level of the returned JSON for global data.
 
 #Requirements
 - >= PHP 5.4
