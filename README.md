@@ -7,6 +7,16 @@ This project is aimed at anyone using the fantastic dataTables jQuery plugin wri
 
 For the mean time you will need to use the old 1.9.x API that is still compatable with 1.10.x. You can find the docs at [the legacy Datatables site](http://legacy.datatables.net/).
 
+## Supported datatables components
+- Client side column re-ordering
+- Per column sorting
+- Global search
+- Search in a specific column
+- Set number of rows to return
+- Filtered and Total rows
+
+All components above work without any extra configuration. In a future release there will be the ability to send back named attributes per row such as `DT_RowClass` and any other data you want to return by row or if you want in the top level of the returned JSON for global data.
+
 #Requirements
 - >= PHP 5.4
 - >= Laravel 4.1.*
@@ -23,6 +33,7 @@ Add the following to your composer.json file
 }
 ````
 
+##Add the Laravel service provider
 Once you have run a `composer update` you will need to add the service provider.
 
 Open up `config/app.php` and add the followng to the service providers array.
@@ -30,7 +41,7 @@ Open up `config/app.php` and add the followng to the service providers array.
 ````
 "Daveawb\Datatables\DatatablesServiceProvider"
 ````
-#Optional Facade
+##Add the Laravel facade (optional)
 
 Add the following to your `config/app.php` alias' array.
 
@@ -41,36 +52,65 @@ Add the following to your `config/app.php` alias' array.
 #Basic Usage
 
 ````php
-$datatable = App::make("Daveawb\Datatables\Datatable");
+Route::post('datatable', function()
+{
+    $datatable = App::make("Daveawb\Datatables\Datatable");
+    
+    $datatable->model(new User());
 
-//The model method will accept an instance of Illuminate\Database\Eloquent\Model
-//or Illuminate\Database\Eloquent\Builder allowing complex queries to be built
-//prior to any datatable query manipulation
-$datatable->model(new User());
- 
-// Array values are the column fields
-$datatable->columns(array(
-    "first_name",
-    "last_name"
-));
-
-// An instance of Illuminate\Http\JsonResponse is returned
-// no need to wrap it any further
-return $datatable->result();
+    $datatable->columns(array(
+        "first_name",
+        "last_name",
+        "username",
+        "verified",
+        "created_at",
+        "updated_at"
+    ));
+    
+    return $datatable->result();
+});
 ````
 
-You can also pass in an instance of a query builder as well if you like to create pre built base queries.
+The columns method takes an array in the order you wish to send data back to the client. Each field maps to a field in the database available from the query you've injected.
+
+The model method will take an instance of either:
+`Illuminate\Database\Eloquent\Model` or `Illuminate\Database\Eloquent\Builder`
+
+You can also pass in an instance of a standard query builder using the `query` method instead of `model`.
+
+````php
+Route::post('datatable', function()
+{
+    $datatable = App::make("Daveawb\Datatables\Datatable");
+    
+    $datatable->query(DB::table('users'));
+
+    $datatable->columns(array(
+        "first_name",
+        "last_name",
+        "username",
+        "verified",
+        "created_at",
+        "updated_at"
+    ));
+    
+    return $datatable->result();
+});
+````
+
+As the model and query methods accept builder instances you can pass a predefined query before inserting it into the datatables package.
 
 ````php
 $user = new User();
 $datatable->model($user->with('roles'));
 ````
 
-If you don't want to use Eloquent models. You can pass in an instance of a query builder instead.
+Or using a standard query builder
 
 ````php
-$datatable->query(DB::table('users'));
+$datatable->query(DB::table('users')->where('deleted_at', '!=', 'NULL');
 ````
+
 ** Note you don't need to pass in a model and a query **
 
 #Roadmap
