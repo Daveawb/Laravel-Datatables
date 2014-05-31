@@ -1,8 +1,7 @@
 <?php
-
 class InputTest extends DatatablesTestCase {
 
-    public $allowed = array(
+    public $globalFields = array(
         'bRegex',
         'iColumns',
         'iDisplayLength',
@@ -12,51 +11,51 @@ class InputTest extends DatatablesTestCase {
         'sSearch'
     );
 
-    public $iterative = array(
-        'bSearchable' => 'iColumns',
-        'bSortable' => 'iColumns',
-        'mDataProp' => 'iColumns',
-        'bRegex' => 'iColumns',
-        'sSearch' => 'iColumns',
-        'iSortCol' => 'iSortingCols',
-        'sSortDir' => 'iSortingCols'
+    protected $columnFields = array(
+        'bSearchable',
+        'bSortable',
+        'mDataProp',
+        'bRegex',
+        'sSearch'
+    );
+
+    protected $sortingFields = array(
+        'iSortCol',
+        'sSortDir'
     );
 
     /**
      * Unit Tests
      */
-    public function testAllowedPropertyContainsCorrectValues()
+    public function testPropertiesContainCorrectDefaults()
     {
-        $property = $this->getDefaultProperty("Daveawb\Datatables\Input", "allowed");
+        $globals = $this->getDefaultProperty("Daveawb\Datatables\Columns\Input", "globalFields");
+        $columns = $this->getDefaultProperty("Daveawb\Datatables\Columns\Input", "columnFields");
+		$sorting = $this->getDefaultProperty("Daveawb\Datatables\Columns\Input", "sortingFields");
 
-        $this->assertEquals($this->allowed, $property);
-    }
-
-    public function testIterativePropertyContainsCorrectValues()
-    {
-        $property = $this->getDefaultProperty("Daveawb\Datatables\Input", "iterative");
-
-        $this->assertEquals($this->iterative, $property);
+        $this->assertEquals($this->globalFields, $globals);
+		$this->assertEquals($this->columnFields, $columns);
+		$this->assertEquals($this->sortingFields, $sorting);
     }
 
     public function testCreatedAttributesAreCorrect()
     {
         $this->app['request']->replace($this->testData);
 
-        $input = new Daveawb\Datatables\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
 
-        $output = $input->build()->get();
+        $output = $input->get();
 
-        foreach ($this->allowed as $property)
+        foreach ($this->globalFields as $property)
         {
-            $this->assertEquals($this->testData[$property], $output[$property]);
+            $this->assertEquals($this->testData[$property], $output['global'][$property]);
         }
 
-        foreach ($this->iterative as $property => $iterator)
+        foreach ($this->columnFields as $property)
         {
-            for ($i = 0; $i < $this->testData[$iterator]; $i++)
+            for ($i = 0; $i  < $this->testData['iColumns']; $i++)
             {
-                $this->assertEquals($this->testData[$property . '_' . $i], $output[$property . '_' . $i]);
+                $this->assertEquals($this->testData[$property . '_' . $i], $output[$i][$property]);
             }
         }
     }
@@ -65,9 +64,9 @@ class InputTest extends DatatablesTestCase {
     {
         $this->app['request']->replace(array_merge($this->testData, array('foo' => 'bar')));
 
-        $input = new Daveawb\Datatables\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
 
-        $output = $input->build()->get();
+        $output = $input->get();
 
         $this->assertTrue($this->app['request']->has('foo'));
         $this->assertFalse(isset($output['foo']));
@@ -77,48 +76,48 @@ class InputTest extends DatatablesTestCase {
     {
         $this->app['request']->replace(array_merge($this->testData, array('iColumns' => '2')));
 
-        $input = new Daveawb\Datatables\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
 
-        $output = $input->build()->get();
+        $output = $input->get();
 
-        $this->assertInternalType("int", $output['iColumns']);
+        $this->assertInternalType("int", $output['global']['iColumns']);
     }
 
     public function testEchoIsTypeCastToInt()
     {
         $this->app['request']->replace(array_merge($this->testData, array('sEcho' => '200')));
 
-        $input = new Daveawb\Datatables\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
 
-        $output = $input->build()->get();
+        $output = $input->get();
 
-        $this->assertInternalType("int", $output['sEcho']);
-        $this->assertEquals(200, $output['sEcho']);
+        $this->assertInternalType("int", $output['global']['sEcho']);
+        $this->assertEquals(200, $output['global']['sEcho']);
     }
-    
+
     public function testGatherReturnsCorrectData()
     {
         $this->app['request']->replace($this->testData);
 
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-        
-        $output = $input->build()->gather(0);
-        
+        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+
+        $output = $input->getColumn(0);
+
         $this->assertFalse($output['bSearchable']);
         $this->assertFalse($output['bSortable']);
         $this->assertEquals($output['mDataProp'], 0);
         $this->assertFalse($output['bRegex']);
         $this->assertEquals($output['sSearch'], "");
     }
-    
+
     public function testGatherGlobalsReturnsCorrectData()
     {
         $this->app['request']->replace($this->testData);
 
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-        
-        $output = $input->build()->gatherGlobals();
-        
+        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+
+        $output = $input->getGlobals();
+
         $this->assertEquals($output['sEcho'], 1);
         $this->assertEquals($output['iDisplayLength'], 10);
         $this->assertEquals($output['iDisplayStart'], 0);
@@ -126,19 +125,19 @@ class InputTest extends DatatablesTestCase {
         $this->assertEquals($output['sSearch'], "");
         $this->assertFalse($output['bRegex']);
     }
-    
+
     public function testGatherSortablesReturnsCorrectData()
     {
         $this->app['request']->replace($this->testData);
 
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-        
-        $output = $input->build()->gatherSortables();
-        
-        $this->assertCount(1, $output);
-        $this->assertTrue($output[0][1] === 'asc');
+        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+
+        $output = $input->getColumn(0);
+
+        $this->assertEquals(true, $output['sort']);
+        $this->assertEquals('asc', $output['sort_dir']);
     }
-    
+
     /**
      * @expectedException Daveawb\Datatables\InputMissingException
      */
@@ -149,9 +148,9 @@ class InputTest extends DatatablesTestCase {
 
         $this->app['request']->replace($data);
 
-        $input = new Daveawb\Datatables\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
 
-        $output = $input->build()->get();
+        $output = $input->get();
     }
 
 }

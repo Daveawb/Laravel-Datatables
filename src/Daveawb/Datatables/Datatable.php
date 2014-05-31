@@ -10,13 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 use ErrorException;
 
-class Datatable implements DatatableInterface {
-    
-    /**
-     * Instance of the input
-     * @var {Object} Daveawb\Datatables\Input
-     */
-    protected $input;
+class Datatable {
     
     /**
      * Instance of the column factory
@@ -37,22 +31,14 @@ class Datatable implements DatatableInterface {
     protected $attributes = array();
 
     /**
-     * Column specifications
-     * @var {Array}
-     */
-    protected $columns = array();
-
-    /**
      * Construct and get all the Input
      * @param {Object} Daveawb\Datatables\Support\Input
      * @return void
      */
-    public function __construct(Input $input, Factory $factory)
+    public function __construct(Factory $factory, JsonResponse $json)
     {
         $this->factory = $factory;
-        $this->input = $input->build();
-        
-        $this->factory->input($input);
+        $this->json = $json;
     }
     
     /**
@@ -79,12 +65,12 @@ class Datatable implements DatatableInterface {
      */
     public function columns(array $columns)
     {
-        // Validate column data against expected data
-        $this->validateColumns($columns);
-        
+    	// Validate the columns against a set of rules
+    	$this->factory->validate($columns);
+		
         foreach($columns as $key => $column)
         {
-            $this->columns[$key] = $this->factory->create($column, $key);
+            $this->factory->create($column, $key);
         }
     }
     
@@ -144,36 +130,15 @@ class Datatable implements DatatableInterface {
      */
     public function result()
     {
-        $query = new Query($this->model, $this->input, $this->columns);
+        $query = new Query($this->model, $this->factory);
         
         return $this->response($query->get());
     }
     
     protected function response($results)
     {
-        $response = new Response($this->columns, $results);
+        $response = new Response($this->factory->getColumns(), $results);
         
-        return new JsonResponse($response->get());
+        return $this->json->setData($response->get());
     }
-
-    /**
-     * Validate columnar data against input to maintain
-     * consistency before proceeding.
-     * @var {Array} columnar data
-     */
-    private function validateColumns(array $columns)
-    {
-        // Check that we have the correct number of columns
-        if (count($columns) !== $this->input->iColumns)
-        {
-            throw new ColumnCountException(
-                sprintf(
-                    "%s columns given, expected %s",
-                    count($columns),
-                    $this->input->iColumns
-                )
-            );
-        }
-    }
-
 }

@@ -18,7 +18,12 @@ class DatatablesServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->bind("Daveawb\Datatables\DatatableInterface", "Daveawb\Datatables\Datatable");
+		$this->package('daveawb/datatables');
+	}
+	
+	public function boot()
+	{
+	
 	}
 
 	/**

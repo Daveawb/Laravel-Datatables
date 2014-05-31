@@ -7,35 +7,31 @@ class QueryTest extends DatatablesTestCase {
         parent::setUp();
         
         $this->app['request']->replace($this->testData);
+		
+		$this->colFactory = Mockery::mock("Daveawb\Datatables\Columns\Factory");
     }
     
     public function testConstructAcceptsModel()
-    {
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-        
-        $query = new Daveawb\Datatables\Query(new UserModel(), $input, array());
+    {        
+        $query = new Daveawb\Datatables\Query(new UserModel(), $this->colFactory);
         
         $this->assertInstanceOf("Illuminate\Database\Eloquent\Model", $this->getProperty($query, "query"));
     }
     
     public function testConstructAcceptsFluentBuilder()
     {
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-        
-        $query = new Daveawb\Datatables\Query(DB::table('contents'), $input, array());
+        $query = new Daveawb\Datatables\Query(DB::table('contents'), $this->colFactory);
         
         $this->assertInstanceOf("Illuminate\Database\Query\Builder", $this->getProperty($query, "query"));
     }
     
     public function testConstructAcceptsEloquentBuilder()
     {
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-        
         $model = new UserModel();
         
         $model = $model->where("id", "=", 1);
         
-        $query = new Daveawb\Datatables\Query($model, $input, array());
+        $query = new Daveawb\Datatables\Query($model, $this->colFactory);
         
         $this->assertInstanceOf("Illuminate\Database\Eloquent\Builder", $this->getProperty($query, "query"));
     }
@@ -45,9 +41,7 @@ class QueryTest extends DatatablesTestCase {
      */
     public function testConstructThrowsExceptionIfFirstArgIsIncorrect()
     {
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-        
-        $query = new Daveawb\Datatables\Query(array(), $input, array());
+        $query = new Daveawb\Datatables\Query(array(), $this->colFactory);
     }
    
 }

@@ -10,33 +10,15 @@ class DatatableTest extends DatatablesTestCase {
         $this->setupDatabase();
 
         $this->app['request']->replace($this->testData);
-
-        $mock = Mockery::mock("Daveawb\Datatables\Input");
-
-        $mock->shouldReceive('build')->once()->andReturn(array('foo' => 'bar'));
-        $mock->shouldReceive('gatherGlobals')->once()->andReturn(array('foo' => 'bar'));
-        $mock->shouldReceive('gatherSortables')->once()->andReturn(array('foo' => 'bar'));
-
-        $this->app->instance("Daveawb\Datatables\Input", $mock);
     }
 
     public function testClassIsCreatedByIoC()
     {
-        $datatable = $this->app->make("Daveawb\Datatables\DatatableInterface");
+        $datatable = $this->app->make("Daveawb\Datatables\Datatable");
 
         $this->assertInstanceOf("Daveawb\Datatables\Datatable", $datatable);
 
         return $datatable;
-    }
-
-    /**
-     * @depends testClassIsCreatedByIoC
-     */
-    public function testInputIsBuiltAndRetrieved($datatable)
-    {
-        $data = $this->getProperty($datatable, "input");
-        
-        $this->assertEquals(array('foo' => 'bar'), $data);
     }
 
     /**
@@ -105,93 +87,79 @@ class DatatableTest extends DatatablesTestCase {
         $datatable->model($model->where("id", "=", 1));
     }
 
-    public function testSettingColumnDataAsBasicArray()
+    public function testSettingColumnDataCallsCreateOnFactory()
     {
-        $input = new Daveawb\Datatables\Input($this->app['request']);
+		$mock = Mockery::mock("Daveawb\Datatables\Columns\Factory");
+		
+		$mock->shouldReceive("validate")->once()->andReturn($this->app['validator']);
+		$mock->shouldReceive("create")->twice();
+		
+		$this->app->instance("Daveawb\Datatables\Columns\Factory", $mock);
 
-        $datatable = new Daveawb\Datatables\Datatable($input, new Daveawb\Datatables\Columns\Factory());
+        $datatable = $this->app->make("Daveawb\Datatables\Datatable");
 
         $datatable->columns($columns = array(
             "id",
             "title"
         ));
-        
-        $columns = $this->getProperty($datatable, "columns");
-        
-        $this->assertCount(2, $columns);
-        $this->assertInstanceOf("Daveawb\Datatables\Columns\Column", $columns[0]);
     }
 
     /**
-     * @expectedException Daveawb\Datatables\ColumnCountException
+     * @expectedException Daveawb\Datatables\ValidationException
      */
     public function testSettingLessColumnsThanExceptedThrowsException()
     {
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-
-        $datatable = new Daveawb\Datatables\Datatable($input, new Daveawb\Datatables\Columns\Factory());
-
+        $datatable = new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input($this->app['request']),
+        		$this->app['validator']
+			),
+			new Illuminate\Http\JsonResponse
+		);
+		
         $datatable->columns(array(
             "id"
         ));
     }
 
     /**
-     * @expectedException Daveawb\Datatables\ColumnCountException
+     * @expectedException Daveawb\Datatables\ValidationException
      */
     public function testSettingMoreColumnsThanExceptedThrowsException()
     {
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-
-        $datatable = new Daveawb\Datatables\Datatable($input, new Daveawb\Datatables\Columns\Factory());
-        
+        $datatable = new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input($this->app['request']),
+        		$this->app['validator']
+			),
+			new Illuminate\Http\JsonResponse
+		);
+		
         $datatable->columns(array(
             "id",
             "title",
             "content"
         ));
     }
-    
-    public function testResultBuildsQuery()
-    {
-        $testData = array(
-            "sEcho" => 1,
-            "iDisplayLength" => 10,
-            "iDisplayStart" => 0,
-            "iColumns" => 2,
-            "sSearch" => "Barry",
-            "bRegex" => false,
-            "bSearchable_0" => false,
-            "bSearchable_1" => false,
-            "sSearch_0" => "",
-            "sSearch_1" => "",
-            "bRegex_0" => false,
-            "bRegex_1" => false,
-            "bSortable_0" => true,
-            "bSortable_1" => true,
-            "iSortingCols" => 1,
-            "iSortCol_0" => 1,
-            "sSortDir_0" => "desc",
-            "mDataProp_0" => 0,
-            "mDataProp_1" => 1
-        );
-        
-        $this->app['request']->replace($testData);
-        
-        $input = new Daveawb\Datatables\Input($this->app['request']);
-        
-        $datatable = new Daveawb\Datatables\Datatable($input, new Daveawb\Datatables\Columns\Factory());
-        
-        $model = new UserModel();
+	
+	public function testResultReturnsAJsonResponseObject()
+	{
+		$datatable = new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input($this->app['request']),
+        		$this->app['validator']
+			),
+			new Illuminate\Http\JsonResponse
+		);
 		
-        $datatable->model($model->select('username', 'first_name', 'last_name'));
-        
-        $datatable->columns(array(
-            "first_name",
-            "last_name"
-        ));
-        
-        $result = $datatable->result();
-    }
-
+		$datatable->model(new UserModel());
+		
+		$datatable->columns(array(
+			"id", "first_name"
+		));
+		
+		$result = $datatable->result();
+		
+		$this->assertInstanceOf("Illuminate\Http\JsonResponse", $result);
+	}
 }

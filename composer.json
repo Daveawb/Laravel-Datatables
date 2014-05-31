@@ -14,6 +14,7 @@
     "require-dev": {
     	"doctrine/dbal": "dev-master",
         "orchestra/testbench": "2.2.*",
+        "orchestra/support": "2.2.*",
         "mockery/mockery": "dev-master"
     },
     "autoload": {

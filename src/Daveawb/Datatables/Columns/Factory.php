@@ -1,18 +1,39 @@
 <?php
 namespace Daveawb\Datatables\Columns;
 
-use Daveawb\Datatables\Input;
+use Daveawb\Datatables\ValidationException;
+
+use Illuminate\Validation\Factory as ValidatorFactory;
 
 /**
  * Column factory class
  */
 class Factory {
-    
-    /**
-     * An array of global input variables
-     * @param {Array}
-     */
-    protected $globals = array();
+		
+	/**
+	 * Input object for use by the factory, this factory
+	 * also provides a minimal facade for access to input
+	 * data held by this class.
+	 * @var Daveawb\Datatables\Columns\Input
+	 */
+	public $input;
+	
+	/**
+	 * The column array that holds the manufactured
+	 * column objects indexed by mDataProp
+	 */
+	protected $columns = array();
+	
+	/**
+	 * Constructor dependency injecting the input class
+	 * that manages the retrieval of data from the request
+	 * @param {Object} Daveawb\Datatables\Input
+	 */
+	public function __construct(Input $input, ValidatorFactory $validator)
+	{
+		$this->validator = $validator;
+		$this->input = $input;
+	}
     
     /**
      * Create a new column with developer settings and passed
@@ -21,38 +42,41 @@ class Factory {
      * @param {Mixed} the mDataProp key for the column
      */
     public function create($field, $key)
-    {
-        if ( ! $this->input )
-            return false;
+    {        
+        $data = $this->input->getColumn($key);
         
-        $data = $this->input->gather($key);
-        
-        foreach($this->sorting as $sort)
-        {
-            if ($sort[0] === $key && $data['bSortable'])
-            {
-                $data['sortable'] = true;
-                $data['sortDirection'] = $sort[1];
-            }
-        }
-        
-        if ( ! empty ($this->globals['sSearch']) )
-            $data['sSearch'] = $this->globals['sSearch'];
-        
-        return new Column($field, $data);
+		if ( ! empty ($this->input->sSearch) && empty ($data['sSearch']) )
+            $data['sSearch'] = $this->input->sSearch;
+		
+        $this->columns[$data['mDataProp']] = new Column($field, $data);
     }
-
-    /**
-     * Set the input class on the factory
-     * @param {String} Daveawb\Datatables\Input
-     */
-    public function input(Input $input)
-    {
-        $this->input = $input;
-        
-        $this->globals = $this->input->gatherGlobals();
-        
-        $this->sorting = $this->input->gatherSortables();
-    }
-
+	
+	public function validate(array $columns)
+	{
+		$data = array(
+			"col_count" => count($columns),
+			"col_expected" => $this->input->iColumns
+		);
+		
+		$rules = array(
+			"col_count" => "required|integer|same:col_expected",
+			"col_expected" => "required|integer"
+		);
+		
+		$validator = $this->validator->make($data, $rules);
+		
+		if ($validator->fails())
+			throw new ValidationException($validator);
+	}
+	
+	public function getColumn($index)
+	{
+		if (array_key_exists($index, $this->columns))
+			return $this->columns[$index];
+	}
+	
+	public function getColumns()
+	{
+		return $this->columns;
+	}
 }

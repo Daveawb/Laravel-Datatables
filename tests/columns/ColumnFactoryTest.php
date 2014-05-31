@@ -9,24 +9,34 @@ class ColumnFactoryTest extends DatatablesTestCase {
         $this->app['request']->replace($this->testData);    
     }
     
-    public function testCreateReturnsNewColumn()
+    public function testCreateBuildsNewColumnIndexedByName()
     {
-        $input = new Daveawb\Datatables\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
         
-        $factory = new Daveawb\Datatables\Columns\Factory();
+        $factory = new Daveawb\Datatables\Columns\Factory($input, $this->app['validator']);
         
-        $factory->input($input->build());
+        $factory->create("id", 0);
         
-        $column = $factory->create("id", 0);
+        $this->assertInstanceOf("Daveawb\Datatables\Columns\Column", $this->getProperty($factory, "columns")[0]);
         
-        $this->assertInstanceOf("Daveawb\Datatables\Columns\Column", $column);
-        
-        return $column;
+        return $factory;
     } 
     
     /**
-     * @depends testCreateReturnsNewColumn
+     * @depends testCreateBuildsNewColumnIndexedByName
      */
+    public function testGetColumnFromFactoryReturnsWithDataSet($factory)
+	{
+		$column = $factory->getColumn(0);
+		
+		$this->assertInstanceOf("Daveawb\Datatables\Columns\Column", $column);
+		
+		return $column;
+	}
+	
+	/**
+	 * @depends testGetColumnFromFactoryReturnsWithDataSet
+	 */
     public function testColumnHasDataSetByFactory(Daveawb\Datatables\Columns\Column $column)
     {
         $this->assertEquals($column->name, 'id');

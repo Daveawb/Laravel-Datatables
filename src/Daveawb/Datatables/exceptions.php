@@ -2,6 +2,8 @@
 namespace Daveawb\Datatables
 {
     use Exception;
+	
+	use Illuminate\Validation\Validator;
 
     class DatatablesException extends Exception {
     }
@@ -11,5 +13,13 @@ namespace Daveawb\Datatables
 
     class ColumnCountException extends DatatablesException {
     }
+	
+	class ValidationException extends DatatablesException {
+		public function __construct(Validator $validator)
+		{
+			$this->validator = $validator;
+			$this->messages = $validator->errors();
+		}
+	}
 
 }

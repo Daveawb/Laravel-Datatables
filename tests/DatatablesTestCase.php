@@ -27,6 +27,11 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
 	public function setUp()
     {
         parent::setUp();
+		
+		// To get the validator working with orchestra we need to 
+		// manually bind a dependency to Symfonys TranslatorInterface.
+		$translator = new Symfony\Component\Translation\Translator("en", new Symfony\Component\Translation\MessageSelector);
+		$this->app->instance("Symfony\Component\Translation\TranslatorInterface", $translator);
     }
 	
 	protected function getPackageProviders()
@@ -76,7 +81,7 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
 		// Allow us to call artisan commands
 		$artisan = $this->app->make('artisan');
 		
-		$artisan->call('migrate', array(
+		$artisan->call('migrate:refresh', array(
             '--database' => 'setup',
             '--path'     => __DIR__ . '/migrations',
         ));
@@ -84,6 +89,11 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
 		$this->setupDatabase();
 	}
 	
+	/**
+	 * Reflection methods. These are used to extract protected/private
+	 * properties or setting protected/private methods to accessible
+	 * allowing direct testing to occur on them.
+	 */
 	public function getDefaultProperty($class, $property)
 	{
 		$class = $this->getReflection($class);
