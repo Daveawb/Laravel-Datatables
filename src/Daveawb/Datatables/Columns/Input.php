@@ -41,27 +41,32 @@ class Input {
      * @var {Array}
      */
     protected $columnFields = array(
-        'bSearchable', 'bSortable', 'mDataProp', 'bRegex', 'sSearch'
+        'bSearchable',
+        'bSortable',
+        'mDataProp',
+        'bRegex',
+        'sSearch'
     );
-	
-	protected $sortingFields = array(
-		'iSortCol', 'sSortDir'
-	);
+
+    protected $sortingFields = array(
+        'iSortCol',
+        'sSortDir'
+    );
 
     /**
      * Array of mapped attributes
      * @var {Array}
      */
     protected $attributes = array();
-    
+
     /**
      * Instance of request
      * @var {Object} Illuminate\Http\Request
      */
     protected $request;
-	
-	protected $initialized = false;
-    
+
+    protected $initialized = false;
+
     /**
      * We need to dependency inject the request object.
      * @param {Object} Illuminate\Http\Request
@@ -70,28 +75,26 @@ class Input {
     {
         $this->request = $request;
     }
-    
+
     /**
      * Get the mapped attributes
      * @return {Array}
      */
     public function get()
     {
-    	$this->build();
-		
+        $this->build();
+
         return $this->attributes;
     }
 
     protected function build()
     {
-    	if ($this->initialized)
-			return $this;
-		
-    	$this->initialized = true;
-		
-        return $this->mapGlobals()
-			->mapColumns()
-        	->mapSorting();
+        if ($this->initialized)
+            return $this;
+
+        $this->initialized = true;
+
+        return $this->mapGlobals()->mapColumns()->mapSorting();
     }
 
     /**
@@ -101,8 +104,8 @@ class Input {
      */
     public function getColumn($key)
     {
-    	$this->build();
-		
+        $this->build();
+
         return $this->attributes[$key];
     }
 
@@ -111,11 +114,11 @@ class Input {
      */
     public function getGlobals($field = null)
     {
-    	$this->build();
-		
-    	if ( ! is_null($field) && array_key_exists($field, $this->attributes['global']) )
-			return $this->attributes['global'][$field];
-		
+        $this->build();
+
+        if ( ! is_null($field) && array_key_exists($field, $this->attributes['global']))
+            return $this->attributes['global'][$field];
+
         return $this->attributes['global'];
     }
 
@@ -131,8 +134,8 @@ class Input {
         {
             $this->applyValue('global', $value);
         }
-		
-		return $this;
+
+        return $this;
     }
 
     /**
@@ -149,28 +152,28 @@ class Input {
     {
         foreach ($this->columnFields as $columnField)
         {
-            for ($i = 0; $i < $this->attributes['global']['iColumns']; $i++)
+            for ($i = 0; $i  < $this->attributes['global']['iColumns']; $i++)
             {
                 $this->applyValue($i, $columnField, $i);
             }
         }
-		
-		return $this;
+
+        return $this;
     }
-	
-	protected function mapSorting()
-	{
-        for ($i = 0; $i < $this->attributes['global']['iSortingCols']; $i++)
+
+    protected function mapSorting()
+    {
+        for ($i = 0; $i  < $this->attributes['global']['iSortingCols']; $i++)
         {
             $ns = $this->request->get('iSortCol' . '_' . $i);
-			$direction = $this->request->get('sSortDir' . '_' . $i);
-			
-			$this->attributes[$ns]['sort'] = true;
-			$this->attributes[$ns]['sort_dir'] = $direction;
+            $direction = $this->request->get('sSortDir' . '_' . $i);
+
+            $this->attributes[$ns]['sort'] = true;
+            $this->attributes[$ns]['sort_dir'] = $direction;
         }
-		
-		return $this;
-	}
+
+        return $this;
+    }
 
     /**
      * Apply a field to the attributes array
@@ -179,17 +182,17 @@ class Input {
      */
     protected function applyValue($ns, $value, $mapping = null)
     {
-    	$mapping = is_null($mapping) ? $value : $value . '_' . $mapping;
-		
+        $mapping = is_null($mapping) ? $value : $value . '_' . $mapping;
+
         $fetched = $this->request->get($mapping);
 
         if (is_null($fetched))
             throw new InputMissingException(sprintf("%s was missing from the input", $value));
-		
-		if ( ! isset($this->attributes[$ns]) )
-			$this->attributes[$ns] = array();
-		 
-        $this->attributes[$ns][$value] = ($value === 'sEcho' || $value[0] === 'i') ? intval($fetched, 10) : $fetched;
+
+        if ( ! isset($this->attributes[$ns]))
+            $this->attributes[$ns] = array();
+
+        $this->attributes[$ns][$value] = ($value  === 'sEcho' || $value[0]  === 'i') ? intval($fetched, 10) : $fetched;
     }
 
     /**
@@ -197,8 +200,8 @@ class Input {
      */
     public function __get($name)
     {
-    	$self = $this->build();
-		
+        $self = $this->build();
+
         if (array_key_exists($name, $self->attributes['global']))
             return $self->attributes['global'][$name];
 
@@ -210,7 +213,8 @@ class Input {
      */
     public function __set($name, $value)
     {
-    	$self = $this->build();
+        $self = $this->build();
         $self->attributes['global'][$name] = $value;
     }
+
 }
