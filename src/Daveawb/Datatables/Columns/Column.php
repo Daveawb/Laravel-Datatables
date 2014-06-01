@@ -2,10 +2,17 @@
 
 class Column {
     
-    public $sortable = false;
-    
-    public $sortDirection = "asc";
-    
+	/**
+	 * Array of fields this columns maps to, the
+	 * first indexed field in always the primary
+	 * @var {Array}
+	 */
+	public $fields = array();
+	
+	/**
+	 * The columns attributes
+	 * @var {Array}
+	 */
 	protected $attributes = array();
 	
     /**
@@ -14,25 +21,14 @@ class Column {
      * @param {String} name
      * @param {Array} data from input
      */
-    public function __construct($name, array $settings)
+    public function __construct($fields, array $settings)
     {
-        $this->name = $name;
-        
-        foreach ($settings as $setting => $value)
-        {
-            $this->{$setting} = $value;
-        }
-    }
-	
-	/**
-	 * Custom query for this column, this column should not have a spot on the
-	 * base query if this method is invoked and will return a separate result
-	 * set specific to this column alone.
-	 */
-	public function query()
-	{
+    	$fields = is_array($fields) ? $fields : array($fields);
 		
-	}
+        $this->fields = $fields;
+        
+        $this->attributes = $settings;
+    }
 		
 	/**
 	 * magic getter

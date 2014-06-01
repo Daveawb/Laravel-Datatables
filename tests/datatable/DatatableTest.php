@@ -111,7 +111,7 @@ class DatatableTest extends DatatablesTestCase {
     {
         $datatable = new Daveawb\Datatables\Datatable(
         	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input($this->app['request']),
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
         		$this->app['validator']
 			),
 			new Illuminate\Http\JsonResponse
@@ -129,7 +129,7 @@ class DatatableTest extends DatatablesTestCase {
     {
         $datatable = new Daveawb\Datatables\Datatable(
         	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input($this->app['request']),
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
         		$this->app['validator']
 			),
 			new Illuminate\Http\JsonResponse
@@ -146,7 +146,7 @@ class DatatableTest extends DatatablesTestCase {
 	{
 		$datatable = new Daveawb\Datatables\Datatable(
         	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input($this->app['request']),
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
         		$this->app['validator']
 			),
 			new Illuminate\Http\JsonResponse
@@ -161,5 +161,20 @@ class DatatableTest extends DatatablesTestCase {
 		$result = $datatable->result();
 		
 		$this->assertInstanceOf("Illuminate\Http\JsonResponse", $result);
+	}
+	
+	public function testSettingMultipleFieldsPerColumn()
+	{
+		$datatable = new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+        		$this->app['validator']
+			),
+			new Illuminate\Http\JsonResponse
+		);
+		
+		$datatable->model(new UserModel());
+		
+		$datatable->result();
 	}
 }

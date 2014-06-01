@@ -19,6 +19,9 @@ class DatatablesServiceProvider extends ServiceProvider {
 	public function register()
 	{
 		$this->package('daveawb/datatables');
+		
+		// We bind the input class to use datatables 1.9.x hungarian notation as default
+		$this->app->bind("Daveawb\Datatables\Columns\Input\BaseInput", "Daveawb\Datatables\Columns\Input\OneNineInput");
 	}
 	
 	public function boot()

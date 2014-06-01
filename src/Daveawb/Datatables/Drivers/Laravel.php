@@ -1,6 +1,7 @@
 <?php
-namespace Daveawb\Datatables;
+namespace Daveawb\Datatables\Drivers;
 
+use Daveawb\Datatables\Driver;
 use Daveawb\Datatables\Columns\Factory;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Query\Expression;
 
 use ErrorException;
 
-class Query {
+class Laravel extends Driver {
 
     /**
      * Instance of the query builder to use
@@ -54,14 +55,10 @@ class Query {
         foreach ($this->factory->getColumns() as $key => $column)
         {
             if ( ! empty($column->sSearch))
-            {
-                $q = $q->orWhere($column->name, 'LIKE', '%' . $column->sSearch . '%');
-            }
+            	$q = $this->buildWhereClause($q, $column);
 
-            if ($column->sortable)
-            {
-                $q = $q->orderBy($column->name, $column->sortDirection);
-            }
+            if ($column->bSortable && $column->sort)
+                $q = $q->orderBy($column->fields[0], $column->sort_dir);
         }
 
         $this->cacheQuery();
@@ -84,6 +81,16 @@ class Query {
             "iTotalRecords" => $this->getCount(0)
         );
     }
+	
+	/**
+	 * Build a where clause for on the query
+	 */
+	protected function buildWhereClause($query, $column)
+	{
+		return (empty($q->wheres)) ?
+			$q->where($column->fields[0], 'LIKE', '%' . $column->sSearch . '%') :
+			$q->orWhere($column->fields[0], 'LIKE', '%' . $column->sSearch . '%');
+	}
 
     /**
      * Cache the query in its current state

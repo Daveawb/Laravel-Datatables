@@ -20,9 +20,15 @@ class Datatable {
 
     /**
      * The Eloquent model to use in our query
-     * @var {Object} Illuminate\Database\Eloquent\Model
+     * @var {Mixed} An instance of a model or builder
      */
     protected $model;
+	
+	/**
+	 * The driver to use for the database
+	 * @var {Object} Daveawb\Datatables\Driver
+	 */
+	protected $driver;
 
     /**
      * Attributes that are applied to each row
@@ -130,7 +136,9 @@ class Datatable {
      */
     public function result()
     {
-        $query = new Query($this->model, $this->factory);
+    	$query = ( ! $this->driver ) ?
+			new Drivers\Laravel($this->model, $this->factory) :
+			new $this->driver($this->model, $this->factory); 
         
         return $this->response($query->get());
     }

@@ -20,5 +20,8 @@
         <testsuite name="columns">
             <directory suffix=".php">./tests/columns</directory>
         </testsuite>
+        <testsuite name="drivers">
+            <directory suffix=".php">./tests/drivers</directory>
+        </testsuite>
     </testsuites>
 </phpunit>

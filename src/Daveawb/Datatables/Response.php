@@ -17,7 +17,7 @@ class Response {
         {
             foreach($this->columns as $key => $column)
             {
-                $filtered[$rowKey][$column->mDataProp] = $result->{$column->name};
+                $filtered[$rowKey][$column->mDataProp] = $result->{$column->fields[0]};
             }
         }
         

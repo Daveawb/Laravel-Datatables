@@ -1,6 +1,6 @@
 <?php
 
-class QueryTest extends DatatablesTestCase {
+class LaravelDriverTest extends DatatablesTestCase {
     
     public function setUp()
     {
@@ -13,14 +13,14 @@ class QueryTest extends DatatablesTestCase {
     
     public function testConstructAcceptsModel()
     {        
-        $query = new Daveawb\Datatables\Query(new UserModel(), $this->colFactory);
+        $query = new Daveawb\Datatables\Drivers\Laravel(new UserModel(), $this->colFactory);
         
         $this->assertInstanceOf("Illuminate\Database\Eloquent\Model", $this->getProperty($query, "query"));
     }
     
     public function testConstructAcceptsFluentBuilder()
     {
-        $query = new Daveawb\Datatables\Query(DB::table('contents'), $this->colFactory);
+        $query = new Daveawb\Datatables\Drivers\Laravel(DB::table('contents'), $this->colFactory);
         
         $this->assertInstanceOf("Illuminate\Database\Query\Builder", $this->getProperty($query, "query"));
     }
@@ -31,7 +31,7 @@ class QueryTest extends DatatablesTestCase {
         
         $model = $model->where("id", "=", 1);
         
-        $query = new Daveawb\Datatables\Query($model, $this->colFactory);
+        $query = new Daveawb\Datatables\Drivers\Laravel($model, $this->colFactory);
         
         $this->assertInstanceOf("Illuminate\Database\Eloquent\Builder", $this->getProperty($query, "query"));
     }
@@ -41,7 +41,7 @@ class QueryTest extends DatatablesTestCase {
      */
     public function testConstructThrowsExceptionIfFirstArgIsIncorrect()
     {
-        $query = new Daveawb\Datatables\Query(array(), $this->colFactory);
+        $query = new Daveawb\Datatables\Drivers\Laravel(array(), $this->colFactory);
     }
    
 }

@@ -2,11 +2,14 @@
 namespace Daveawb\Datatables\Columns;
 
 use Daveawb\Datatables\ValidationException;
+use Daveawb\Datatables\Columns\Input\BaseInput;
 
 use Illuminate\Validation\Factory as ValidatorFactory;
 
 /**
- * Column factory class
+ * Column factory class, creates columns and stores them
+ * @author David Barker
+ * @package daveawb\datatables
  */
 class Factory {
 		
@@ -14,22 +17,25 @@ class Factory {
 	 * Input object for use by the factory, this factory
 	 * also provides a minimal facade for access to input
 	 * data held by this class.
-	 * @var Daveawb\Datatables\Columns\Input
+	 * @var Daveawb\Datatables\Columns\Input\Input
 	 */
 	public $input;
 	
 	/**
 	 * The column array that holds the manufactured
 	 * column objects indexed by mDataProp
+	 * @var {Array} containing instances of Daveawb\Datatables\Columns\Column
 	 */
 	protected $columns = array();
 	
 	/**
 	 * Constructor dependency injecting the input class
-	 * that manages the retrieval of data from the request
+	 * that manages the retrieval of data from the request and
+	 * Laravels Validator factory.
 	 * @param {Object} Daveawb\Datatables\Input
+	 * @param {Object} Illuminate\Validation\Factory
 	 */
-	public function __construct(Input $input, ValidatorFactory $validator)
+	public function __construct(BaseInput $input, ValidatorFactory $validator)
 	{
 		$this->validator = $validator;
 		$this->input = $input;
@@ -41,16 +47,20 @@ class Factory {
      * @param {String} field to map to
      * @param {Mixed} the mDataProp key for the column
      */
-    public function create($field, $key)
+    public function create($fields, $key)
     {        
         $data = $this->input->getColumn($key);
         
 		if ( ! empty ($this->input->sSearch) && empty ($data['sSearch']) )
             $data['sSearch'] = $this->input->sSearch;
 		
-        $this->columns[$data['mDataProp']] = new Column($field, $data);
+        $this->columns[$data['mDataProp']] = new Column($fields, $data);
     }
 	
+	/**
+	 * Validate raw column data
+	 * @param {Array} of raw column data
+	 */
 	public function validate(array $columns)
 	{
 		$data = array(
@@ -69,12 +79,21 @@ class Factory {
 			throw new ValidationException($validator);
 	}
 	
+	/**
+	 * Get a specific column by its index
+	 * @param {Integer} Column index
+	 * @return {Object} Daveawb\Datatables\Columns\Column
+	 */
 	public function getColumn($index)
 	{
 		if (array_key_exists($index, $this->columns))
 			return $this->columns[$index];
 	}
 	
+	/**
+	 * Get the full list of columns
+	 * @param {Array} containing instances of Daveawb\Datatables\Columns\Column
+	 */
 	public function getColumns()
 	{
 		return $this->columns;

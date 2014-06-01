@@ -11,7 +11,7 @@ class ColumnFactoryTest extends DatatablesTestCase {
     
     public function testCreateBuildsNewColumnIndexedByName()
     {
-        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
         
         $factory = new Daveawb\Datatables\Columns\Factory($input, $this->app['validator']);
         
@@ -39,13 +39,13 @@ class ColumnFactoryTest extends DatatablesTestCase {
 	 */
     public function testColumnHasDataSetByFactory(Daveawb\Datatables\Columns\Column $column)
     {
-        $this->assertEquals($column->name, 'id');
+        $this->assertEquals($column->fields[0], 'id');
         $this->assertEquals($column->mDataProp, 0);
         $this->assertFalse($column->bSearchable);
         $this->assertFalse($column->bSortable);
         $this->assertFalse($column->bRegex);
         $this->assertEquals($column->sSearch, "");
-        $this->assertFalse($column->sortable);
-        $this->assertEquals($column->sortDirection, "asc");
+        $this->assertTrue($column->sort);
+        $this->assertEquals($column->sort_dir, "asc");
     }
 }

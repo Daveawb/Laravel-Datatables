@@ -1,9 +1,7 @@
 <?php
-namespace Daveawb\Datatables\Columns;
+namespace Daveawb\Datatables\Columns\Input;
 
 use Daveawb\Datatables\InputMissingException;
-
-use Illuminate\Http\Request;
 
 /**
  * Input class to handle all Datatables input
@@ -15,12 +13,10 @@ use Illuminate\Http\Request;
  * @author David Barker
  * @license MIT
  */
-class Input {
+class OneNineInput extends BaseInput {
 
     /**
-     * Array of allowed attributes. These are datatables internal
-     * attributes. These attributes are mapped one:one to their
-     * respective input attribute.
+     * Array of fields that have only one value from the input
      * @var {Array}
      */
     protected $globalFields = array(
@@ -34,10 +30,7 @@ class Input {
     );
 
     /**
-     * Array of iterative attributes. These are datatables internal
-     * attributes. These attributes are iterative, meaning they will
-     * have x number of values created from them based on the second
-     * parameter that will always be an integer.
+     * Array of fields that use iColumns as their iterator
      * @var {Array}
      */
     protected $columnFields = array(
@@ -47,80 +40,15 @@ class Input {
         'bRegex',
         'sSearch'
     );
-
+	
+	/**
+	 * Array of fields that use iSortingCols as their iterator
+	 * @var {Array}
+	 */
     protected $sortingFields = array(
         'iSortCol',
         'sSortDir'
     );
-
-    /**
-     * Array of mapped attributes
-     * @var {Array}
-     */
-    protected $attributes = array();
-
-    /**
-     * Instance of request
-     * @var {Object} Illuminate\Http\Request
-     */
-    protected $request;
-
-    protected $initialized = false;
-
-    /**
-     * We need to dependency inject the request object.
-     * @param {Object} Illuminate\Http\Request
-     */
-    public function __construct(Request $request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     * Get the mapped attributes
-     * @return {Array}
-     */
-    public function get()
-    {
-        $this->build();
-
-        return $this->attributes;
-    }
-
-    protected function build()
-    {
-        if ($this->initialized)
-            return $this;
-
-        $this->initialized = true;
-
-        return $this->mapGlobals()->mapColumns()->mapSorting();
-    }
-
-    /**
-     * Gather settings for a specific column
-     * keyed by $key
-     * @param {Integer} column key
-     */
-    public function getColumn($key)
-    {
-        $this->build();
-
-        return $this->attributes[$key];
-    }
-
-    /**
-     * Gather the global settings
-     */
-    public function getGlobals($field = null)
-    {
-        $this->build();
-
-        if ( ! is_null($field) && array_key_exists($field, $this->attributes['global']))
-            return $this->attributes['global'][$field];
-
-        return $this->attributes['global'];
-    }
 
     /**
      * Map allowed fields to the attributes array
@@ -146,7 +74,7 @@ class Input {
      * amongst other types that can be added if required.
      *
      * @param {Array}
-     * @return void
+     * @return {Object} Self
      */
     protected function mapColumns()
     {
@@ -161,6 +89,10 @@ class Input {
         return $this;
     }
 
+    /**
+     * Get sorting data and apply it to the correct column
+     * @return {Object} Self
+     */
     protected function mapSorting()
     {
         for ($i = 0; $i  < $this->attributes['global']['iSortingCols']; $i++)
@@ -194,27 +126,4 @@ class Input {
 
         $this->attributes[$ns][$value] = ($value  === 'sEcho' || $value[0]  === 'i') ? intval($fetched, 10) : $fetched;
     }
-
-    /**
-     * Magic method to get a specific attribute
-     */
-    public function __get($name)
-    {
-        $self = $this->build();
-
-        if (array_key_exists($name, $self->attributes['global']))
-            return $self->attributes['global'][$name];
-
-        return null;
-    }
-
-    /**
-     * Magic method to set a specific attribute
-     */
-    public function __set($name, $value)
-    {
-        $self = $this->build();
-        $self->attributes['global'][$name] = $value;
-    }
-
 }

@@ -29,9 +29,9 @@ class InputTest extends DatatablesTestCase {
      */
     public function testPropertiesContainCorrectDefaults()
     {
-        $globals = $this->getDefaultProperty("Daveawb\Datatables\Columns\Input", "globalFields");
-        $columns = $this->getDefaultProperty("Daveawb\Datatables\Columns\Input", "columnFields");
-		$sorting = $this->getDefaultProperty("Daveawb\Datatables\Columns\Input", "sortingFields");
+        $globals = $this->getDefaultProperty("Daveawb\Datatables\Columns\Input\OneNineInput", "globalFields");
+        $columns = $this->getDefaultProperty("Daveawb\Datatables\Columns\Input\OneNineInput", "columnFields");
+		$sorting = $this->getDefaultProperty("Daveawb\Datatables\Columns\Input\OneNineInput", "sortingFields");
 
         $this->assertEquals($this->globalFields, $globals);
 		$this->assertEquals($this->columnFields, $columns);
@@ -42,7 +42,7 @@ class InputTest extends DatatablesTestCase {
     {
         $this->app['request']->replace($this->testData);
 
-        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
 
         $output = $input->get();
 
@@ -64,7 +64,7 @@ class InputTest extends DatatablesTestCase {
     {
         $this->app['request']->replace(array_merge($this->testData, array('foo' => 'bar')));
 
-        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
 
         $output = $input->get();
 
@@ -76,7 +76,7 @@ class InputTest extends DatatablesTestCase {
     {
         $this->app['request']->replace(array_merge($this->testData, array('iColumns' => '2')));
 
-        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
 
         $output = $input->get();
 
@@ -87,7 +87,7 @@ class InputTest extends DatatablesTestCase {
     {
         $this->app['request']->replace(array_merge($this->testData, array('sEcho' => '200')));
 
-        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
 
         $output = $input->get();
 
@@ -99,7 +99,7 @@ class InputTest extends DatatablesTestCase {
     {
         $this->app['request']->replace($this->testData);
 
-        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
 
         $output = $input->getColumn(0);
 
@@ -114,7 +114,7 @@ class InputTest extends DatatablesTestCase {
     {
         $this->app['request']->replace($this->testData);
 
-        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
 
         $output = $input->getGlobals();
 
@@ -130,7 +130,7 @@ class InputTest extends DatatablesTestCase {
     {
         $this->app['request']->replace($this->testData);
 
-        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
 
         $output = $input->getColumn(0);
 
@@ -148,7 +148,7 @@ class InputTest extends DatatablesTestCase {
 
         $this->app['request']->replace($data);
 
-        $input = new Daveawb\Datatables\Columns\Input($this->app['request']);
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
 
         $output = $input->get();
     }
