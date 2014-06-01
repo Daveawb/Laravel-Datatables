@@ -41,9 +41,10 @@ class Datatable {
      * @param {Object} Daveawb\Datatables\Support\Input
      * @return void
      */
-    public function __construct(Factory $factory, JsonResponse $json)
+    public function __construct(Factory $factory, Driver $driver, JsonResponse $json)
     {
         $this->factory = $factory;
+		$this->driver = $driver;
         $this->json = $json;
     }
     
@@ -122,11 +123,9 @@ class Datatable {
      */
     public function result()
     {
-    	$query = ( ! $this->driver ) ?
-			new Drivers\Laravel($this->model, $this->factory) :
-			new $this->driver($this->model, $this->factory); 
+    	$this->driver->setup($this->model, $this->factory);
         
-        return $this->response($query->get());
+        return $this->response($this->driver->get());
     }
     
 	/**

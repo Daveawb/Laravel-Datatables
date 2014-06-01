@@ -15,7 +15,7 @@ abstract class Driver {
      * @param {Mixed} Query builder
      * @param {Object} Daveawb\Datatables\Columns\Factory
      */
-    abstract public function __construct($query, Factory $factory);
+    abstract public function setup($query, Factory $factory);
 
 
     /**

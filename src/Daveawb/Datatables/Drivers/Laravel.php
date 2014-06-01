@@ -26,12 +26,12 @@ class Laravel extends Driver {
     protected $builders = array();
 
     /**
-     * Query class constructor
+     * Entry point for this class, this method is called first before any other methods
+	 * do setup for the query class here.
      * @param {Mixed} Query builder
-     * @param {Object} Daveawb\Datatables\Input
-     * @param {Array} Array of columns
+     * @param {Object} Daveawb\Datatables\Columns\Factory
      */
-    public function __construct($query, Factory $factory)
+    public function setup($query, Factory $factory)
     {
         if ( ! $query instanceof Model && ! $query instanceof Builder && ! $query instanceof Fluent)
         {

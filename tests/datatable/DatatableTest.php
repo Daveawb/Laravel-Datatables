@@ -96,6 +96,7 @@ class DatatableTest extends DatatablesTestCase {
         		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
         		$this->app['validator']
 			),
+			new Daveawb\Datatables\Drivers\Laravel,
 			new Illuminate\Http\JsonResponse
 		);
 		
@@ -114,6 +115,7 @@ class DatatableTest extends DatatablesTestCase {
         		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
         		$this->app['validator']
 			),
+			new Daveawb\Datatables\Drivers\Laravel,
 			new Illuminate\Http\JsonResponse
 		);
 		
@@ -131,6 +133,7 @@ class DatatableTest extends DatatablesTestCase {
         		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
         		$this->app['validator']
 			),
+			new Daveawb\Datatables\Drivers\Laravel,
 			new Illuminate\Http\JsonResponse
 		);
 		
@@ -152,6 +155,7 @@ class DatatableTest extends DatatablesTestCase {
         		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
         		$this->app['validator']
 			),
+			new Daveawb\Datatables\Drivers\Laravel,
 			new Illuminate\Http\JsonResponse
 		);
 		
