@@ -94,31 +94,15 @@ class Datatable {
     }
     
     /**
-     * Dual purpose getter and setter for models
-     * setter : Inject a model into the Datatable
-     * getter : return current model
-     * @param {Object} Illuminate\Database\Eloquent\Model ||
-     * Illuminate\Database\Eloquent\Builder
-     * @return {Mixed} void on set, Illuminate\Database\Eloquent\Model on get
+     * Inject a model - The driver checks for the correct types
+	 * and does not need to be done here. This is to allow for
+	 * multiple drivers using different objects / configurations
+	 * in the future.
+	 * @param {Mixed} Data model to use
      */
     public function model($model)
     {
-        if ($model instanceof Model || $model instanceof Builder)
-        {
-            $this->model = $model;
-        }
-        else
-        {
-            throw new ErrorException(
-                sprintf(
-                    "Argument 1 passed to %s must be an instance of %s or %s, %s given", 
-                    get_class($this), 
-                    Model,
-                    Builder,
-                    $model
-                )
-            );
-        }
+        $this->model = $model;
     }
     
     /**
@@ -132,7 +116,9 @@ class Datatable {
     }
     
     /**
-     * Gather results
+     * Gather results using the default driver or a specified
+	 * driver that has been injected.
+	 * @return {Object} Illuminate\Http\JsonResponse
      */
     public function result()
     {
@@ -143,6 +129,12 @@ class Datatable {
         return $this->response($query->get());
     }
     
+	/**
+	 * Build a response object using the result data set and
+	 * the columns factory to configure and order results.
+	 * @param {Array} of results from the driver
+	 * @return {Object} Illuminate\Http\JsonResponse
+	 */
     protected function response($results)
     {
         $response = new Response($this->factory->getColumns(), $results);

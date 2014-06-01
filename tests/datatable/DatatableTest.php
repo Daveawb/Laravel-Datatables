@@ -30,24 +30,6 @@ class DatatableTest extends DatatablesTestCase {
 
         $this->assertInstanceOf("Illuminate\Database\Eloquent\Model", $this->getProperty($datatable, "model"));
     }
-
-    /**
-     * @depends testClassIsCreatedByIoC
-     * @expectedException ErrorException
-     */
-    public function testSettingStringToModelThrowsException($datatable)
-    {
-        $datatable->model("strings!");
-    }
-    
-    /**
-     * @depends testClassIsCreatedByIoC
-     * @expectedException ErrorException
-     */
-    public function testSettingBadInstanceToModelThrowsException($datatable)
-    {
-        $datatable->model(new stdClass());
-    }
     
     /**
      * @depends testClassIsCreatedByIoC
@@ -174,6 +156,11 @@ class DatatableTest extends DatatablesTestCase {
 		);
 		
 		$datatable->model(new UserModel());
+		
+		$datatable->columns(array(
+			"id",
+			array("first_name", "last_name")
+		));
 		
 		$datatable->result();
 	}
