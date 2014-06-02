@@ -75,6 +75,11 @@ class Datatable {
         }
     }
     
+    /**
+     * Set a different driver to use instead of
+     * current default loaded driver
+     * @param {Object} Daveawb\Datatables\Driver
+     */
     public function driver(Driver $driver)
     {
         $this->driver = $driver;
