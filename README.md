@@ -192,6 +192,7 @@ $datatable->columns(array(
 ));
 
 // The result of the above would be
+// Only the aaData values are shown here
 array(
     "aaData" => array(
         array(
