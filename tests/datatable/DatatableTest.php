@@ -286,7 +286,7 @@ class DatatableTest extends DatatablesTestCase {
 		$this->assertCount(1, $data->aaData);
 	}
     
-    public function testInterpreterReturnsCorrectData()
+    public function testCombineInterpreterReturnsCorrectData()
     {
         $datatable = new Daveawb\Datatables\Datatable(
             new Daveawb\Datatables\Columns\Factory(
@@ -309,5 +309,55 @@ class DatatableTest extends DatatablesTestCase {
         $data = json_decode($result->getContent());
         
         $this->assertEquals($data->aaData[0][0], "Barry Manilow");
+    }
+    
+    public function testAppendInterpreterReturnsCorrectData()
+    {
+        $datatable = new Daveawb\Datatables\Datatable(
+            new Daveawb\Datatables\Columns\Factory(
+                new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+                $this->app['validator']
+            ),
+            new Daveawb\Datatables\Drivers\Laravel,
+            new Illuminate\Http\JsonResponse
+        );
+        
+        $datatable->query(new UserModel());
+        
+        $datatable->columns(array(
+            array("first_name", "last_name", array("append" => "%")),
+            "id"
+        ));
+        
+        $result = $datatable->result();
+        
+        $data = json_decode($result->getContent());
+        
+        $this->assertEquals($data->aaData[0][0], "Barry%");
+    }
+    
+    public function testMultipleInterpretersReturnCorrectData()
+    {
+        $datatable = new Daveawb\Datatables\Datatable(
+            new Daveawb\Datatables\Columns\Factory(
+                new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+                $this->app['validator']
+            ),
+            new Daveawb\Datatables\Drivers\Laravel,
+            new Illuminate\Http\JsonResponse
+        );
+        
+        $datatable->query(new UserModel());
+        
+        $datatable->columns(array(
+            array("first_name", "last_name", array("append" => "%", "prepend" => "Mr, ", "combine" => "first_name,last_name, ")),
+            "id"
+        ));
+        
+        $result = $datatable->result();
+        
+        $data = json_decode($result->getContent());
+        
+        $this->assertEquals($data->aaData[0][0], "Mr Barry% Manilow");
     }
 }
