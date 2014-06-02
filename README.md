@@ -128,8 +128,8 @@ $datatable->columns(array(
 ));
 
 // If value of first_name is David the output would be
-// Only the aaData values are shown here
 array(
+    // Only the aaData values are shown here
     "aaData" => array(
         array(
             "first_name" => "David eats lots of pies"
@@ -146,8 +146,8 @@ $datatable->columns(array(
 ));
 
 // If value of first_name is David the output would be
-// Only the aaData values are shown here
 array(
+    // Only the aaData values are shown here
     "aaData" => array(
         array(
             "first_name" => "Mr&nbsp;David"
@@ -165,8 +165,8 @@ $datatable->columns(array(
 Instead of passing a string into the column we pass an array, with the last value always being an array that declares the decorators/interpreters you want to use with their unique settings. Each interpreter will have separate documentation in the future. For now only `combine` is available and takes in field names to combine with the last value being the seperator. If the database values returned are `first_name = "David"` and `last_name = "Barker"` the above code would produce:
 
 ````php
-// Only the aaData values are shown here
 array(
+    // Only the aaData values are shown here
     "aaData" => array(
         array(
             "first_name" => "David&nbsp;Barker"
@@ -192,8 +192,8 @@ $datatable->columns(array(
 ));
 
 // The result of the above would be
-// Only the aaData values are shown here
 array(
+    // Only the aaData values are shown here
     "aaData" => array(
         array(
             "first_name" => "Mr David Barker BSc(hons)"
