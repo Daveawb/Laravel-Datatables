@@ -285,4 +285,29 @@ class DatatableTest extends DatatablesTestCase {
 		
 		$this->assertCount(1, $data->aaData);
 	}
+    
+    public function testInterpreterReturnsCorrectData()
+    {
+        $datatable = new Daveawb\Datatables\Datatable(
+            new Daveawb\Datatables\Columns\Factory(
+                new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+                $this->app['validator']
+            ),
+            new Daveawb\Datatables\Drivers\Laravel,
+            new Illuminate\Http\JsonResponse
+        );
+        
+        $datatable->query(new UserModel());
+        
+        $datatable->columns(array(
+            array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
+            "id"
+        ));
+        
+        $result = $datatable->result();
+        
+        $data = json_decode($result->getContent());
+        
+        $this->assertEquals($data->aaData[0][0], "Barry Manilow");
+    }
 }

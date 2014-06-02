@@ -14,14 +14,15 @@
         <testsuite name="laravel">
             <directory suffix=".php">./tests/laravel</directory>
         </testsuite>
-        <testsuite name="datatable">
-            <directory suffix=".php">./tests/datatable</directory>
-        </testsuite>
         <testsuite name="columns">
             <directory suffix=".php">./tests/columns</directory>
         </testsuite>
         <testsuite name="drivers">
             <directory suffix=".php">./tests/drivers</directory>
+        </testsuite>
+        <testsuite name="datatable">
+            <file>./tests/datatable/FacadeTest.php</file>
+            <file>./tests/datatable/DatatableTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

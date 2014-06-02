@@ -84,8 +84,8 @@ class Factory {
 	 * @param {Integer} Column index
 	 * @return {Object} Daveawb\Datatables\Columns\Column
 	 */
-	public function getColumn($index)
-	{
+	public function getColumn($index, $data = null)
+	{        
 		if (array_key_exists($index, $this->columns))
 			return $this->columns[$index];
 	}
