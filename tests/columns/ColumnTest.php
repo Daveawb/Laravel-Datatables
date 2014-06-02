@@ -62,9 +62,9 @@ class ColumnTest extends DatatablesTestCase {
     public function testInterpratationLogicIsSetAsAClosure()
     {
         $column = new Daveawb\Datatables\Columns\Column($fields = array(
-                "id", "first_name", function($id, $first_name, $document)
+                "id", function($field, $dbData)
                 {
-                    return $id . ' ' . $first_name;
+                    return sprintf('<button data-id="%s">Example</button>', $dbData->{$field});
                 }
             ),
             $settings = array(
@@ -76,11 +76,15 @@ class ColumnTest extends DatatablesTestCase {
             )
         );
         
-        $method = $this->getMethod($column, "getInterpretationData");
-        $data = $method->invoke($column);
+        $dbData = new stdClass();
+        $dbData->first_name = "David";
+        $dbData->last_name = "Barker";
+        $dbData->username = "daveawb";
+        
+        $data = $column->interpret("first_name", $dbData);
         
         $this->assertInstanceOf("Closure", $data);
-        $this->assertEquals($data(1, "David", array()), "1 David");
+        $this->assertEquals($data(1, $dbData), '<button data-id="1">Example</button>');
     }
     
     public function testDataIsReturnedAfterRunningThroughInterpreter()

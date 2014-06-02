@@ -46,7 +46,8 @@ class Column {
         {
             $this->setInterpretationData(array_pop($fields));
         }
-        elseif ($fields[count($fields) - 1] instanceof Closure)
+        
+        if ($fields[count($fields) - 1] instanceof Closure)
         {
             $this->closure = array_pop($fields);
         }
@@ -103,6 +104,11 @@ class Column {
                 $interpreter = $reflector->newInstanceArgs(array($this->fields, $data));
                 $data->{$field} = $interpreter->evaluate($args);
             }
+        }
+        
+        if ($this->closure instanceof Closure)
+        {
+            call_user_func_array($this->closure, array($field, $data))
         }
     }
     
