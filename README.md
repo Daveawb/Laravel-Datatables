@@ -26,7 +26,7 @@ Add the following to your composer.json file
 ````json
 {
     "require": {
-        "daveawb/datatables": "v0.1.0-beta"
+        "daveawb/datatables": "v0.2.0-beta"
     },
 }
 ````
@@ -111,9 +111,29 @@ $datatable->query(DB::table('users')->where('deleted_at', '!=', 'NULL');
 
 ** Note you don't need to pass in a model and a query **
 
+##Column interpreter
+Every now and again you find that you need to merge the contents of fields or wrap them in HTML tags. This is where the interpreter comes in.
+
+````php
+$datatable->columns(array(
+    array("first_name", "last_name", array("combine" => "first_name,last_name,&nbsp"))
+));
+````
+Instead of passing a string into the column we pass an array, with the last value always being an array that declares the decorators/interpreters you want to use with their unique settings. Each interpreter will have separate documentation in the future. For now only `combine` is available and takes in field names to combine with the last value being the seperator. If the database values returned are `first_name = "David"` and `last_name = "Barker" The output the above code would produce:
+
+````php
+// Only the aaData values are shown here
+array(
+    "aaData" => array(
+        array(
+            "first_name" => "David Barker",
+            "last_name" => "Barker"
+        )
+    )
+);
+````
 #Roadmap
 - Support for dataTables 1.10.x options
-- Column interpretation language for manipulating column data as well as concatenating multiple fields
 - A query extension allowing for query manipulation after datatables has taken a count of the fields in the database
 - Multiple fields per column
 - A driver interface to allow custom database drivers to be used such as MongoDb, Cassandra or CouchDB instead of Eloquent/Fluent.
