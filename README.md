@@ -26,7 +26,7 @@ Add the following to your composer.json file
 ````json
 {
     "require": {
-        "daveawb/datatables": "v0.2.0-beta"
+        "daveawb/datatables": "v0.2.6-beta"
     },
 }
 ````
