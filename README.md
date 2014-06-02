@@ -116,7 +116,7 @@ Every now and again you find that you need to merge the contents of fields or wr
 
 ````php
 $datatable->columns(array(
-    array("first_name", "last_name", array("combine" => "first_name,last_name,&nbsp"))
+    array("first_name", "last_name", array("combine" => "first_name,last_name,&nbsp;"))
 ));
 ````
 Instead of passing a string into the column we pass an array, with the last value always being an array that declares the decorators/interpreters you want to use with their unique settings. Each interpreter will have separate documentation in the future. For now only `combine` is available and takes in field names to combine with the last value being the seperator. If the database values returned are `first_name = "David"` and `last_name = "Barker" The output the above code would produce:
@@ -126,7 +126,7 @@ Instead of passing a string into the column we pass an array, with the last valu
 array(
     "aaData" => array(
         array(
-            "first_name" => "David Barker",
+            "first_name" => "David&nbsp;Barker",
             "last_name" => "Barker"
         )
     )
