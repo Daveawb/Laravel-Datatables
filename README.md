@@ -109,9 +109,54 @@ Or using a standard query builder
 $datatable->query(DB::table('users')->where('deleted_at', '!=', 'NULL');
 ````
 
-##Column interpreter
-Every now and again you find that you need to merge the contents of fields or wrap them in HTML tags. This is where the interpreter comes in.
+##Column interpretation / decoration
+Every now and again you find that you need to merge the contents of fields or wrap them in HTML tags. This is where column interpretation / decoration comes in. Each of the decorations / interpretations are executed in the order you declare them. If you use two or more decorators on the same column, the result of the previous operation will be the value passed into the next decorator. This will allow you to build some complex decorations with a few core methods.
 
+**At present the first field declared is modified to hold the result of the combination of the two fields.**
+
+###Built in methods
+
+-Append
+-Prepend
+-Combine
+
+####Append
+Append takes two arguments, the value to append and an optional separator.
+````php
+$datatable->columns(array(
+    array("first_name", array("append" => "eats lots of pies,&nbsp;"))
+));
+
+// If value of first_name is David the output would be
+// Only the aaData values are shown here
+array(
+    "aaData" => array(
+        array(
+            "first_name" => "David eats lots of pies"
+        )
+    )
+);
+````
+
+####Prepend
+Prepend takes two arguments, the value to prepend and an optional separator.
+````php
+$datatable->columns(array(
+    array("first_name", array("prepend" => "Mr,&nbsp;"))
+));
+
+// If value of first_name is David the output would be
+// Only the aaData values are shown here
+array(
+    "aaData" => array(
+        array(
+            "first_name" => "Mr&nbsp;David"
+        )
+    )
+);
+````
+
+####Combine
 ````php
 $datatable->columns(array(
     array("first_name", "last_name", array("combine" => "first_name,last_name,&nbsp;"))
@@ -124,16 +169,63 @@ Instead of passing a string into the column we pass an array, with the last valu
 array(
     "aaData" => array(
         array(
-            "first_name" => "David&nbsp;Barker",
-            "last_name" => "Barker"
+            "first_name" => "David&nbsp;Barker"
         )
     )
 );
 ````
 
-At present the first field declared is modified to hold the result of the combination of the two fields.
+####Chaining interpreters / decorators
+You can chain as many decorators together as you like, interpreters are slightly different as they have terminal and non terminal expressions. For now all interpreters are terminal expressions and treat each call as a new interpretation.
 
-Please note that to date the second field is not subject to any search, ordering or any other database related functionality. This will more than likely be added in the future. 
+````php
+$datatable->columns(array(
+    array(
+        "first_name", 
+        "last_name", 
+        array(
+            "combine" => "first_name,last_name, ",
+            "append" => "Mr, ",
+            "prepend" => "BSc(hons), "
+        )
+    );
+));
+
+// The result of the above would be
+array(
+    "aaData" => array(
+        array(
+            "first_name" => "Mr David Barker BSc(hons)"
+        )
+    )
+);
+````
+
+###Use a closure on your column!
+To allow some fine grained control over the contents of a specific field you can use a closure instead / as well as the decorators. You must declare a closure **BEFORE** any decorators / interpreters. Also be aware your closure will be executed **AFTER** decorators / interpretaters have been run.
+
+````php
+$datatable->columns(array(
+    array(
+        "first_name", 
+        function($field, $databaseRowData)
+        {
+            return sprintf("A modified first_name field, it was %s before", $databaseRowData->$field);
+        }
+    );
+));
+
+// The result of the above would be
+array(
+    "aaData" => array(
+        array(
+            "first_name" => "A modified first_name field, it was David before"
+        )
+    )
+);
+````
+
+Please note that to date the second field is not subject to any search, ordering or any other database related functionality. This will more than likely be added in the future.
 
 #Roadmap
 - Support for dataTables 1.10.x options
