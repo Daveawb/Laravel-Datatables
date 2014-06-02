@@ -132,6 +132,9 @@ array(
     )
 );
 ````
+
+At present the first field declared is modified to hold the result of the combination of the two fields.
+
 #Roadmap
 - Support for dataTables 1.10.x options
 - A query extension allowing for query manipulation after datatables has taken a count of the fields in the database
