@@ -34,6 +34,11 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
 		$this->app->instance("Symfony\Component\Translation\TranslatorInterface", $translator);
     }
 	
+	public function tearDown()
+	{
+		Mockery::close();
+	}
+	
 	protected function getPackageProviders()
     {
         return array('Daveawb\Datatables\DatatablesServiceProvider');

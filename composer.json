@@ -20,7 +20,8 @@
     "autoload": {
 	    "classmap" : [
 	    	"src/Daveawb/Datatables/exceptions.php",
-	    	"tests/DatatablesTestCase.php"
+	    	"tests/DatatablesTestCase.php",
+	    	"tests/laravel"
 	    ],
         "psr-0": {
             "Daveawb\\Datatables": "src/"

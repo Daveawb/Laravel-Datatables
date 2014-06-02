@@ -250,14 +250,14 @@ class DatatableTest extends DatatablesTestCase {
 		
 		$data = json_decode($result->getContent());
 		
-		$this->assertEquals("Barry", $data->aaData[1][0]);
+		$this->assertEquals("Englebert", $data->aaData[1][0]);
 	}
 	
 	public function testSearchReturnsOnlyResultsWithSearchString()
 	{
 		$testData = array_merge($this->testData, array(
 			"bSearchable_0" => true,
-			"bSearchable_1" => true,
+			"bSearchable_1" => false,
 			"sSearch" => "Barry"
 		));
 		
@@ -283,7 +283,6 @@ class DatatableTest extends DatatablesTestCase {
 		
 		$data = json_decode($result->getContent());
 		
-		dd($data);
 		$this->assertCount(1, $data->aaData);
 	}
 }

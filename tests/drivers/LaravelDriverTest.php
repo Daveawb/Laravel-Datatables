@@ -51,5 +51,87 @@ class LaravelDriverTest extends DatatablesTestCase {
         
 		$query->query(array());
     }
-   
+	
+	public function testBuildQueryWheresAddsWhereClause()
+	{
+		$driver = new Daveawb\Datatables\Drivers\Laravel();
+        
+		$model = new UserModel();
+		
+		$column = new Daveawb\Datatables\Columns\Column(array("id"), array("bRegex" => false, "sSearch" => "Barry", "bSearchable" => true, "bSortable" => false));
+		
+		$builder = $this->getMethod($driver, "buildWhereClause");
+
+		$query = $builder->invoke($driver, $model, $column);
+		
+		$wheres = $query->getQuery()->wheres[0];
+		
+		$this->assertEquals("id", $wheres["column"]);
+		$this->assertEquals("%Barry%", $wheres["value"]);
+		$this->assertEquals("and", $wheres["boolean"]);
+	}
+	
+	public function testBuildFullQueryAddsWhereClauses()
+	{
+		$driver = new Daveawb\Datatables\Drivers\Laravel();
+		
+		$this->colFactory->shouldReceive("getColumns")->once()->andReturn(array(
+			 new Daveawb\Datatables\Columns\Column(array("id"), array("bRegex" => false, "sSearch" => "Barry", "bSearchable" => true, "bSortable" => false)),
+			 new Daveawb\Datatables\Columns\Column(array("first_name"), array("bRegex" => false, "sSearch" => "Barry", "bSearchable" => true, "bSortable" => false))
+		));
+		
+		$stdClass = new stdClass();
+		$stdClass->iDisplayStart = 0;
+		$stdClass->iDisplayLength = 10;
+		
+		$this->colFactory->input = $stdClass;
+		
+		$driver->query(new UserModel());
+		$driver->factory($this->colFactory);
+		
+		$build = $this->getMethod($driver, "build");
+		
+		$query = $build->invoke($driver);
+		
+		$wheres = $query->getQuery()->wheres;
+		
+		$this->assertCount(2, $wheres);
+		$this->assertEquals("id", $wheres[0]["column"]);
+		$this->assertEquals("%Barry%", $wheres[0]["value"]);
+		$this->assertEquals("and", $wheres[0]["boolean"]);
+		
+		
+		$this->assertEquals("first_name", $wheres[1]["column"]);
+		$this->assertEquals("%Barry%", $wheres[1]["value"]);
+		$this->assertEquals("or", $wheres[1]["boolean"]);
+	}
+   	
+	public function testBuildFullQueryAddsSkipAndTake()
+	{
+		$driver = new Daveawb\Datatables\Drivers\Laravel();
+		
+		$this->colFactory->shouldReceive("getColumns")->once()->andReturn(array(
+			 new Daveawb\Datatables\Columns\Column(array("id"), array("bRegex" => false, "sSearch" => "Barry", "bSearchable" => true, "bSortable" => false)),
+			 new Daveawb\Datatables\Columns\Column(array("first_name"), array("bRegex" => false, "sSearch" => "Barry", "bSearchable" => true, "bSortable" => false))
+		));
+		
+		$stdClass = new stdClass();
+		$stdClass->iDisplayStart = 0;
+		$stdClass->iDisplayLength = 10;
+		
+		$this->colFactory->input = $stdClass;
+		
+		$driver->query(new UserModel());
+		$driver->factory($this->colFactory);
+		
+		$build = $this->getMethod($driver, "build");
+		
+		$query = $build->invoke($driver);
+		
+		$offset = $query->getQuery()->offset;
+		$limit = $query->getQuery()->limit;
+		
+		$this->assertEquals(0, $offset);
+		$this->assertEquals(10, $limit);
+	}
 }

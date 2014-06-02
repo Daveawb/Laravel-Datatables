@@ -51,7 +51,7 @@ class Factory {
     {        
         $data = $this->input->getColumn($key);
         
-		if ( ! empty ($this->input->sSearch) && empty ($data['sSearch']) )
+		if ( (strlen($this->input->sSearch) > 0) && ( strlen($data['sSearch']) < 1 ) )
             $data['sSearch'] = $this->input->sSearch;
 		
         $this->columns[$data['mDataProp']] = new Column($fields, $data);

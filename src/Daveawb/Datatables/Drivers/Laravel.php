@@ -55,10 +55,10 @@ class Laravel extends Driver {
 
         foreach ($this->factory->getColumns() as $key => $column)
         {
-            if ( ! empty($column->sSearch))
+            if ( strlen($column->sSearch) > 0 )
             	$q = $this->buildWhereClause($q, $column);
 
-            if ($column->bSortable && $column->sort)
+            if ($column->bSortable && (isset($column->sort) && $column->sort))
                 $q = $q->orderBy($column->fields[0], $column->sort_dir);
         }
 
@@ -88,9 +88,14 @@ class Laravel extends Driver {
 	 */
 	protected function buildWhereClause($query, $column)
 	{
-		return (empty($q->wheres)) ?
-			$q->where($column->fields[0], 'LIKE', '%' . $column->sSearch . '%') :
-			$q->orWhere($column->fields[0], 'LIKE', '%' . $column->sSearch . '%');
+		$evaluate = $query;
+		
+		if ($evaluate instanceof Builder)
+			$evaluate = $query->getQuery();
+		
+		return ( ! isset($evaluate->wheres) && ! is_array($evaluate->wheres) ) ?
+			$query->where($column->fields[0], 'LIKE', '%' . $column->sSearch . '%') :
+			$query->orWhere($column->fields[0], 'LIKE', '%' . $column->sSearch . '%');
 	}
 
     /**
@@ -100,7 +105,7 @@ class Laravel extends Driver {
     {
         $query = $this->query;
 
-        if ($query instanceof \Illuminate\Database\Eloquent\Builder)
+        if ($query instanceof Builder)
             $query = $query->getQuery();
 
         $this->builders[] = clone($query);
