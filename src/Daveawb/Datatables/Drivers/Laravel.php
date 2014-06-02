@@ -36,14 +36,6 @@ class Laravel extends Driver {
 
         $this->cacheQuery();
     }
-	
-	/**
-	 * Set the factory on the class
-	 */
-	public function factory(Factory $factory)
-	{
-		$this->factory = $factory;
-	}
 
     /**
      * Build the query
