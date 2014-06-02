@@ -74,7 +74,12 @@ class Datatable {
             $this->factory->create($column, $key);
         }
     }
-
+    
+    public function driver(Driver $driver)
+    {
+        $this->driver = $driver;
+    }
+    
     /**
      * Inject a query object, string or configuration
 	 * into the driver. Type checking is done in the 
@@ -88,6 +93,19 @@ class Datatable {
     }
 
     /**
+     * Build a response object using the result data set and
+     * the columns factory to configure and order results.
+     * @param {Array} of results from the driver
+     * @return {Object} Illuminate\Http\JsonResponse
+     */
+    private function response($results)
+    {
+        $response = new Response($this->factory->getColumns(), $results);
+
+        return $this->json->setData($response->get());
+    }
+    
+    /**
      * Gather results using the default driver or a specified
      * driver that has been injected.
      * @return {Object} Illuminate\Http\JsonResponse
@@ -98,18 +116,4 @@ class Datatable {
 
         return $this->response($this->driver->get());
     }
-
-    /**
-     * Build a response object using the result data set and
-     * the columns factory to configure and order results.
-     * @param {Array} of results from the driver
-     * @return {Object} Illuminate\Http\JsonResponse
-     */
-    protected function response($results)
-    {
-        $response = new Response($this->factory->getColumns(), $results);
-
-        return $this->json->setData($response->get());
-    }
-
 }
