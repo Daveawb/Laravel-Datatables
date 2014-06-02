@@ -124,7 +124,7 @@ Every now and again you find that you need to merge the contents of fields or wr
 Append takes two arguments, the value to append and an optional separator.
 ````php
 $datatable->columns(array(
-    array("first_name", array("append" => "eats lots of pies,&nbsp;"))
+    array("first_name", array("append" => "eats lots of pies, ")) // Note the space as second arg
 ));
 
 // If value of first_name is David the output would be
