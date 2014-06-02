@@ -10,11 +10,12 @@ abstract class Driver {
      */
     protected $query;
 	
-	/**
-	 * Set the query object on the driver
-	 * @param {Mixed} Query builder
-	 */
-	abstract public function query($query);
+    /**
+     * Set the query object on the driver
+     * @param {Mixed} Query builder
+     */
+    abstract public function query($query);
+	
     /**
      * Set the factory object on the driver
      * @param {Object} Daveawb\Datatables\Columns\Factory
