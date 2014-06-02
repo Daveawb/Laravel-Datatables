@@ -116,9 +116,9 @@ Every now and again you find that you need to merge the contents of fields or wr
 
 ###Built in methods
 
--Append
--Prepend
--Combine
+- Append
+- Prepend
+- Combine
 
 ####Append
 Append takes two arguments, the value to append and an optional separator.
