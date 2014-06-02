@@ -124,7 +124,7 @@ Every now and again you find that you need to merge the contents of fields or wr
 Append takes two arguments, the value to append and an optional separator.
 ````php
 $datatable->columns(array(
-    // Note the space as second arg
+    // Note the space as second arg to append
     array("first_name", array("append" => "eats lots of pies, "))
 ));
 
@@ -143,15 +143,16 @@ array(
 Prepend takes two arguments, the value to prepend and an optional separator.
 ````php
 $datatable->columns(array(
-    array("first_name", array("prepend" => "Mr,&nbsp;"))
+    // Note the space as second arg to prepend
+    array("last_name", array("prepend" => "Mr, "))
 ));
 
-// If value of first_name is David the output would be
+// If value of last_name is Barker the output would be
 array(
     // Only the aaData values are shown here
     "aaData" => array(
         array(
-            "first_name" => "Mr&nbsp;David"
+            "last_name" => "Mr Barker"
         )
     )
 );
@@ -160,7 +161,8 @@ array(
 ####Combine
 ````php
 $datatable->columns(array(
-    array("first_name", "last_name", array("combine" => "first_name,last_name,&nbsp;"))
+    // Note the space as the last arg to combine
+    array("first_name", "last_name", array("combine" => "first_name,last_name, "))
 ));
 ````
 Instead of passing a string into the column we pass an array, with the last value always being an array that declares the decorators/interpreters you want to use with their unique settings. Each interpreter will have separate documentation in the future. For now only `combine` is available and takes in field names to combine with the last value being the seperator. If the database values returned are `first_name = "David"` and `last_name = "Barker"` the above code would produce:
@@ -170,11 +172,12 @@ array(
     // Only the aaData values are shown here
     "aaData" => array(
         array(
-            "first_name" => "David&nbsp;Barker"
+            "first_name" => "David Barker"
         )
     )
 );
 ````
+You can combine as many fields as you like, you are not limited to two.
 
 ####Chaining interpreters / decorators
 You can chain as many decorators together as you like, interpreters are slightly different as they have terminal and non terminal expressions. For now all interpreters are terminal expressions and treat each call as a new interpretation.
