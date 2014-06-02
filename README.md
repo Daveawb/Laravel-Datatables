@@ -215,7 +215,10 @@ $datatable->columns(array(
         "first_name", 
         function($field, $databaseRowData)
         {
-            return sprintf("A modified first_name field, it was %s before", $databaseRowData->$field);
+            return sprintf(
+                "A modified first_name field, it was %s before",
+                $databaseRowData->$field
+            );
         }
     );
 ));
