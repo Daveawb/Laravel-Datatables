@@ -117,7 +117,7 @@ $datatable->columns(array(
     array("first_name", "last_name", array("combine" => "first_name,last_name,&nbsp;"))
 ));
 ````
-Instead of passing a string into the column we pass an array, with the last value always being an array that declares the decorators/interpreters you want to use with their unique settings. Each interpreter will have separate documentation in the future. For now only `combine` is available and takes in field names to combine with the last value being the seperator. If the database values returned are `first_name = "David"` and `last_name = "Barker" The output the above code would produce:
+Instead of passing a string into the column we pass an array, with the last value always being an array that declares the decorators/interpreters you want to use with their unique settings. Each interpreter will have separate documentation in the future. For now only `combine` is available and takes in field names to combine with the last value being the seperator. If the database values returned are `first_name = "David"` and `last_name = "Barker"` the above code would produce:
 
 ````php
 // Only the aaData values are shown here
@@ -133,10 +133,11 @@ array(
 
 At present the first field declared is modified to hold the result of the combination of the two fields.
 
+Please note that to date the second field is not subject to any search, ordering or any other database related functionality. This will more than likely be added in the future. 
+
 #Roadmap
 - Support for dataTables 1.10.x options
 - A query extension allowing for query manipulation after datatables has taken a count of the fields in the database
-- Multiple fields per column
 - A driver interface to allow custom database drivers to be used such as MongoDb, Cassandra or CouchDB instead of Eloquent/Fluent.
 
 #Testing

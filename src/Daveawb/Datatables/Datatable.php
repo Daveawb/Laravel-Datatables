@@ -66,9 +66,8 @@ class Datatable {
      */
     public function columns(array $columns)
     {
-        // Validate the columns against a set of rules
         $this->factory->validate($columns);
-
+        
         foreach ($columns as $key => $column)
         {
             $this->factory->create($column, $key);
