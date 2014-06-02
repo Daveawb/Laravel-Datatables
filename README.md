@@ -26,7 +26,7 @@ Add the following to your composer.json file
 ````json
 {
     "require": {
-        "daveawb/datatables": "v0.2.0-beta"
+        "daveawb/datatables": "v0.2.6-beta"
     },
 }
 ````
@@ -109,31 +109,131 @@ Or using a standard query builder
 $datatable->query(DB::table('users')->where('deleted_at', '!=', 'NULL');
 ````
 
-##Column interpreter
-Every now and again you find that you need to merge the contents of fields or wrap them in HTML tags. This is where the interpreter comes in.
+##Column interpretation / decoration
+Every now and again you find that you need to merge the contents of fields or wrap them in HTML tags. This is where column interpretation / decoration comes in. Each of the decorations / interpretations are executed in the order you declare them. If you use two or more decorators on the same column, the result of the previous operation will be the value passed into the next decorator. This will allow you to build some complex decorations with a few core methods.
 
+**At present the first field declared is modified to hold the result of the combination of the two fields.**
+
+###Built in methods
+
+- Append
+- Prepend
+- Combine
+
+####Append
+Append takes two arguments, the value to append and an optional separator.
 ````php
 $datatable->columns(array(
-    array("first_name", "last_name", array("combine" => "first_name,last_name,&nbsp;"))
+    // Note the space as second arg to append
+    array("first_name", array("append" => "eats lots of pies, "))
 ));
-````
-Instead of passing a string into the column we pass an array, with the last value always being an array that declares the decorators/interpreters you want to use with their unique settings. Each interpreter will have separate documentation in the future. For now only `combine` is available and takes in field names to combine with the last value being the seperator. If the database values returned are `first_name = "David"` and `last_name = "Barker"` the above code would produce:
 
-````php
-// Only the aaData values are shown here
+// If value of first_name is David the output would be
 array(
+    // Only the aaData values are shown here
     "aaData" => array(
         array(
-            "first_name" => "David&nbsp;Barker",
-            "last_name" => "Barker"
+            "first_name" => "David eats lots of pies"
         )
     )
 );
 ````
 
-At present the first field declared is modified to hold the result of the combination of the two fields.
+####Prepend
+Prepend takes two arguments, the value to prepend and an optional separator.
+````php
+$datatable->columns(array(
+    // Note the space as second arg to prepend
+    array("last_name", array("prepend" => "Mr, "))
+));
 
-Please note that to date the second field is not subject to any search, ordering or any other database related functionality. This will more than likely be added in the future. 
+// If value of last_name is Barker the output would be
+array(
+    // Only the aaData values are shown here
+    "aaData" => array(
+        array(
+            "last_name" => "Mr Barker"
+        )
+    )
+);
+````
+
+####Combine
+````php
+$datatable->columns(array(
+    // Note the space as the last arg to combine
+    array("first_name", "last_name", array("combine" => "first_name,last_name, "))
+));
+````
+Instead of passing a string into the column we pass an array, with the last value always being an array that declares the decorators/interpreters you want to use with their unique settings. Each interpreter will have separate documentation in the future. For now only `combine` is available and takes in field names to combine with the last value being the seperator. If the database values returned are `first_name = "David"` and `last_name = "Barker"` the above code would produce:
+
+````php
+array(
+    // Only the aaData values are shown here
+    "aaData" => array(
+        array(
+            "first_name" => "David Barker"
+        )
+    )
+);
+````
+You can combine as many fields as you like, you are not limited to two.
+
+####Chaining interpreters / decorators
+You can chain as many decorators together as you like, interpreters are slightly different as they have terminal and non terminal expressions. For now all interpreters are terminal expressions and treat each call as a new interpretation.
+
+````php
+$datatable->columns(array(
+    array(
+        "first_name", 
+        "last_name", 
+        array(
+            "combine" => "first_name,last_name, ",
+            "append" => "Mr, ",
+            "prepend" => "BSc(hons), "
+        )
+    );
+));
+
+// The result of the above would be
+array(
+    // Only the aaData values are shown here
+    "aaData" => array(
+        array(
+            "first_name" => "Mr David Barker BSc(hons)"
+        )
+    )
+);
+````
+
+###Use a closure on your column!
+To allow some fine grained control over the contents of a specific field you can use a closure instead / as well as the decorators. You must declare a closure **BEFORE** any decorators / interpreters. Also be aware your closure will be executed **AFTER** decorators / interpretaters have been run.
+
+````php
+$datatable->columns(array(
+    array(
+        "first_name", 
+        function($field, $databaseRowData)
+        {
+            return sprintf(
+                "A modified first_name field, it was %s before",
+                $databaseRowData->$field
+            );
+        }
+    );
+));
+
+// The result of the above would be
+array(
+    "aaData" => array(
+        array(
+            "first_name" => "A modified first_name field, it was David before"
+        )
+    )
+);
+````
+
+Please note that to date the second field is not subject to any search, ordering or any other database related functionality. This will more than likely be added in the future.
 
 #Roadmap
 - Support for dataTables 1.10.x options

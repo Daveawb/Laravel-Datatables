@@ -46,7 +46,8 @@ class Column {
         {
             $this->setInterpretationData(array_pop($fields));
         }
-        elseif ($fields[count($fields) - 1] instanceof Closure)
+        
+        if ($fields[count($fields) - 1] instanceof Closure)
         {
             $this->closure = array_pop($fields);
         }
@@ -71,18 +72,6 @@ class Column {
     }
     
     /**
-     * Get the interpretation data
-     * @return {Mixed} Closure or Array
-     */
-    protected function getInterpretationData()
-    {
-        if ($this->closure instanceof Closure)
-            return $this->closure;
-        
-        return $this->interpret;
-    }
-    
-    /**
      * Run data through this columns interpreters
      * and return the modified results
      * @param {Array} database data
@@ -90,7 +79,7 @@ class Column {
      */ 
     public function interpret($field, &$data)
     {
-        if (count($this->interpret) < 1)
+        if (count($this->interpret) < 1 && is_null($this->closure))
             return $data->{$field};
             
         foreach($this->interpret as $class => $args)
@@ -103,6 +92,11 @@ class Column {
                 $interpreter = $reflector->newInstanceArgs(array($this->fields, $data));
                 $data->{$field} = $interpreter->evaluate($args);
             }
+        }
+        
+        if ($this->closure instanceof Closure)
+        {
+            $data->{$field} = call_user_func_array($this->closure, array($field, $data));
         }
     }
     

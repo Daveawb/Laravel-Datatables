@@ -49,8 +49,7 @@ class ColumnTest extends DatatablesTestCase {
             )
         );
         
-        $method = $this->getMethod($column, "getInterpretationData");
-        $data = $method->invoke($column);
+        $data = $this->getProperty($column, "interpret");
         
         $this->assertTrue(is_array($data));
         
@@ -59,12 +58,12 @@ class ColumnTest extends DatatablesTestCase {
         ), $data);
     }
     
-    public function testInterpratationLogicIsSetAsAClosure()
+    public function testInterpretationLogicIsSetAsAClosure()
     {
         $column = new Daveawb\Datatables\Columns\Column($fields = array(
-                "id", "first_name", function($id, $first_name, $document)
+                "id", function($field, $dbData)
                 {
-                    return $id . ' ' . $first_name;
+                    return sprintf('<button data-id="%s">Example</button>', $dbData->{$field});
                 }
             ),
             $settings = array(
@@ -76,11 +75,32 @@ class ColumnTest extends DatatablesTestCase {
             )
         );
         
-        $method = $this->getMethod($column, "getInterpretationData");
-        $data = $method->invoke($column);
+        $this->assertInstanceOf("Closure", $this->getProperty($column, "closure"));
+    }
+    
+    public function testInterpratationClosureReturnsCorrectly()
+    {
+        $column = new Daveawb\Datatables\Columns\Column($fields = array(
+                "id", function($field, $dbData)
+                {
+                    return sprintf('<button data-id="%s">Example</button>', $dbData->{$field});
+                }
+            ),
+            $settings = array(
+                "mDataProp" => 0,
+                "bSearchable" => false,
+                "bSortable" => true,
+                "bRegex" => false,
+                "sSearch" => ""
+            )
+        );
         
-        $this->assertInstanceOf("Closure", $data);
-        $this->assertEquals($data(1, "David", array()), "1 David");
+        $dbData = new stdClass();
+        $dbData->id = 1;
+        
+        $column->interpret("id", $dbData);
+        
+        $this->assertEquals('<button data-id="1">Example</button>', $dbData->id);
     }
     
     public function testDataIsReturnedAfterRunningThroughInterpreter()
