@@ -14,12 +14,6 @@ use ErrorException;
 class Laravel extends Driver {
 
     /**
-     * Instance of the query builder to use
-     * @var {Mixed}
-     */
-    protected $query;
-
-    /**
      * Array of cached query builders to get row counts
      * @var {Array}
      */
@@ -31,7 +25,7 @@ class Laravel extends Driver {
      * @param {Mixed} Query builder
      * @param {Object} Daveawb\Datatables\Columns\Factory
      */
-    public function setup($query, Factory $factory)
+    public function query($query)
     {
         if ( ! $query instanceof Model && ! $query instanceof Builder && ! $query instanceof Fluent)
         {
@@ -39,10 +33,17 @@ class Laravel extends Driver {
         }
 
         $this->query = $query;
-        $this->factory = $factory;
 
         $this->cacheQuery();
     }
+	
+	/**
+	 * Set the factory on the class
+	 */
+	public function factory(Factory $factory)
+	{
+		$this->factory = $factory;
+	}
 
     /**
      * Build the query

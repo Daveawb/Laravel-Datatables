@@ -11,25 +11,25 @@ class LaravelDriverTest extends DatatablesTestCase {
 		$this->colFactory = Mockery::mock("Daveawb\Datatables\Columns\Factory");
     }
     
-    public function testSetupAcceptsModel()
+    public function testQueryAcceptsModel()
     {        
         $query = new Daveawb\Datatables\Drivers\Laravel();
         
-		$query->setup(new UserModel(), $this->colFactory);
+		$query->query(new UserModel());
 		
         $this->assertInstanceOf("Illuminate\Database\Eloquent\Model", $this->getProperty($query, "query"));
     }
     
-    public function testConstructAcceptsFluentBuilder()
+    public function testQueryAcceptsFluentBuilder()
     {
         $query = new Daveawb\Datatables\Drivers\Laravel();
         
-		$query->setup(DB::table('users'), $this->colFactory);
+		$query->query(DB::table('users'));
         
         $this->assertInstanceOf("Illuminate\Database\Query\Builder", $this->getProperty($query, "query"));
     }
     
-    public function testConstructAcceptsEloquentBuilder()
+    public function testQueryAcceptsEloquentBuilder()
     {
         $model = new UserModel();
         
@@ -37,7 +37,7 @@ class LaravelDriverTest extends DatatablesTestCase {
         
         $query = new Daveawb\Datatables\Drivers\Laravel();
         
-		$query->setup($model, $this->colFactory);
+		$query->query($model);
         
         $this->assertInstanceOf("Illuminate\Database\Eloquent\Builder", $this->getProperty($query, "query"));
     }
@@ -45,11 +45,11 @@ class LaravelDriverTest extends DatatablesTestCase {
     /**
      * @expectedException ErrorException
      */
-    public function testConstructThrowsExceptionIfFirstArgIsIncorrect()
+    public function testQueryThrowsExceptionIfFirstArgIsIncorrect()
     {
         $query = new Daveawb\Datatables\Drivers\Laravel();
         
-		$query->setup(array(), $this->colFactory);
+		$query->query(array());
     }
    
 }

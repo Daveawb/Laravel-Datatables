@@ -5,9 +5,6 @@ class DatatableTest extends DatatablesTestCase {
     public function setUp()
     {
         parent::setUp();
-        
-        //$this->migrateDatabase();
-        $this->setupDatabase();
 
         $this->app['request']->replace($this->testData);
     }
@@ -26,9 +23,11 @@ class DatatableTest extends DatatablesTestCase {
      */
     public function testModelGetAndSet($datatable)
     {
-        $datatable->model(new UserModel());
-
-        $this->assertInstanceOf("Illuminate\Database\Eloquent\Model", $this->getProperty($datatable, "model"));
+        $datatable->query(new UserModel());
+		
+		$driver = $this->getProperty($datatable, "driver");
+		
+        $this->assertInstanceOf("Illuminate\Database\Eloquent\Model", $this->getProperty($driver, "query"));
     }
     
     /**
@@ -38,7 +37,9 @@ class DatatableTest extends DatatablesTestCase {
     {
         $datatable->query(DB::table('content'));
         
-        $this->assertInstanceOf("Illuminate\Database\Query\Builder", $this->getProperty($datatable, "model"));
+		$driver = $this->getProperty($datatable, "driver");
+		
+        $this->assertInstanceOf("Illuminate\Database\Query\Builder", $this->getProperty($driver, "query"));
     }
 
     /**
@@ -66,7 +67,11 @@ class DatatableTest extends DatatablesTestCase {
     {
         $model = new UserModel();
 
-        $datatable->model($model->where("id", "=", 1));
+        $datatable->query($model->where("id", "=", 1));
+		
+		$driver = $this->getProperty($datatable, "driver");
+		
+        $this->assertInstanceOf("Illuminate\Database\Eloquent\Builder", $this->getProperty($driver, "query"));
     }
 
     public function testSettingColumnDataCallsCreateOnFactory()
@@ -137,7 +142,7 @@ class DatatableTest extends DatatablesTestCase {
 			new Illuminate\Http\JsonResponse
 		);
 		
-		$datatable->model(new UserModel());
+		$datatable->query(new UserModel());
 		
 		$datatable->columns(array(
 			"id", "first_name"
@@ -159,13 +164,126 @@ class DatatableTest extends DatatablesTestCase {
 			new Illuminate\Http\JsonResponse
 		);
 		
-		$datatable->model(new UserModel());
+		$datatable->query(new UserModel());
 		
 		$datatable->columns(array(
-			"id",
-			array("first_name", "last_name")
+			$col1 = "id",
+			$col2 = array("first_name", "last_name")
 		));
 		
-		$datatable->result();
+		$factory = $this->getProperty($datatable, "factory");
+		
+		$column = $factory->getColumn(0);
+		
+		$this->assertEquals(array($col1), $this->getProperty($column, "fields"));
+		
+		$column = $factory->getColumn(1);
+		
+		$this->assertEquals($col2, $this->getProperty($column, "fields"));
+	}
+	
+	/**
+	 * Module tests
+	 */
+	public function testResultsAreSortedAscending()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => true,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "asc"
+		));
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+        		$this->app['validator']
+			),
+			new Daveawb\Datatables\Drivers\Laravel,
+			new Illuminate\Http\JsonResponse
+		);
+		
+		$datatable->query(new UserModel());
+		
+		$datatable->columns(array(
+			"first_name",
+			"last_name"
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		$this->assertEquals("Barry", $data->aaData[0][0]);
+	}
+	
+	public function testResultsAreSortedDescending()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => true,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "desc"
+		));
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+        		$this->app['validator']
+			),
+			new Daveawb\Datatables\Drivers\Laravel,
+			new Illuminate\Http\JsonResponse
+		);
+		
+		$datatable->query(new UserModel());
+		
+		$datatable->columns(array(
+			"first_name",
+			"last_name"
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		$this->assertEquals("Barry", $data->aaData[1][0]);
+	}
+	
+	public function testSearchReturnsOnlyResultsWithSearchString()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSearchable_0" => true,
+			"bSearchable_1" => true,
+			"sSearch" => "Barry"
+		));
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+        		$this->app['validator']
+			),
+			new Daveawb\Datatables\Drivers\Laravel,
+			new Illuminate\Http\JsonResponse
+		);
+		
+		$datatable->query(new UserModel());
+		
+		$datatable->columns(array(
+			"first_name",
+			"last_name"
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		dd($data);
+		$this->assertCount(1, $data->aaData);
 	}
 }

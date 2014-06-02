@@ -6,7 +6,7 @@ class Datatable extends Facade {
 	
 	protected static function getFacadeAccessor() 
 	{
-		return 'Daveawb\Datatables\DatatableInterface';
+		return 'Daveawb\Datatables\Datatable';
 	}
 	
 }

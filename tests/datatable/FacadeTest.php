@@ -26,6 +26,6 @@ class FacadeTest extends DatatablesTestCase {
 		$method = parent::getMethod("Daveawb\Datatables\Facades\Datatable", "getFacadeAccessor");
 		$result = $method->invoke(new Daveawb\Datatables\Facades\Datatable());
 		
-		$this->assertEquals("Daveawb\Datatables\DatatableInterface", $result);
+		$this->assertEquals("Daveawb\Datatables\Datatable", $result);
 	}
 }

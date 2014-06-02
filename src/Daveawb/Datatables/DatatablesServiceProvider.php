@@ -28,7 +28,7 @@ class DatatablesServiceProvider extends ServiceProvider {
 	
 	public function boot()
 	{
-	
+		
 	}
 
 	/**
