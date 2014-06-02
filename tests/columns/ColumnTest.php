@@ -49,8 +49,7 @@ class ColumnTest extends DatatablesTestCase {
             )
         );
         
-        $method = $this->getMethod($column, "getInterpretationData");
-        $data = $method->invoke($column);
+        $data = $this->getProperty($column, "interpret");
         
         $this->assertTrue(is_array($data));
         

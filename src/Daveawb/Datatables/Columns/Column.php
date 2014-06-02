@@ -72,18 +72,6 @@ class Column {
     }
     
     /**
-     * Get the interpretation data
-     * @return {Mixed} Closure or Array
-     */
-    protected function getInterpretationData()
-    {
-        if ($this->closure instanceof Closure)
-            return $this->closure;
-        
-        return $this->interpret;
-    }
-    
-    /**
      * Run data through this columns interpreters
      * and return the modified results
      * @param {Array} database data
