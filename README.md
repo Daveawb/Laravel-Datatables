@@ -54,7 +54,7 @@ Route::post('datatable', function()
 {
     $datatable = App::make("Daveawb\Datatables\Datatable");
     
-    $datatable->model(new User());
+    $datatable->query(new User());
 
     $datatable->columns(array(
         "first_name",
@@ -71,10 +71,10 @@ Route::post('datatable', function()
 
 The columns method takes an array in the order you wish to send data back to the client. Each field maps to a field in the database available from the query you've injected.
 
-The model method will take an instance of either:
+The query method maps directly to the driver being used, as standard Eloquent models/builders and query builders are accepted:
 `Illuminate\Database\Eloquent\Model` or `Illuminate\Database\Eloquent\Builder`
 
-You can also pass in an instance of a standard query builder using the `query` method instead of `model`.
+Example passing in a standard query builder.
 
 ````php
 Route::post('datatable', function()
@@ -96,11 +96,11 @@ Route::post('datatable', function()
 });
 ````
 
-As the model and query methods accept builder instances you can pass a predefined query before inserting it into the datatables package.
+As thequery method accepts builder instances you can pass a predefined query before inserting it into the datatables package.
 
 ````php
 $user = new User();
-$datatable->model($user->with('roles'));
+$datatable->query($user->with('roles'));
 ````
 
 Or using a standard query builder
@@ -108,8 +108,6 @@ Or using a standard query builder
 ````php
 $datatable->query(DB::table('users')->where('deleted_at', '!=', 'NULL');
 ````
-
-** Note you don't need to pass in a model and a query **
 
 ##Column interpreter
 Every now and again you find that you need to merge the contents of fields or wrap them in HTML tags. This is where the interpreter comes in.
