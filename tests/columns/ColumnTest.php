@@ -59,7 +59,27 @@ class ColumnTest extends DatatablesTestCase {
         ), $data);
     }
     
-    public function testInterpratationLogicIsSetAsAClosure()
+    public function testInterpretationLogicIsSetAsAClosure()
+    {
+        $column = new Daveawb\Datatables\Columns\Column($fields = array(
+                "id", function($field, $dbData)
+                {
+                    return sprintf('<button data-id="%s">Example</button>', $dbData->{$field});
+                }
+            ),
+            $settings = array(
+                "mDataProp" => 0,
+                "bSearchable" => false,
+                "bSortable" => true,
+                "bRegex" => false,
+                "sSearch" => ""
+            )
+        );
+        
+        $this->assertInstanceOf("Closure", $this->getProperty($column, "closure"));
+    }
+    
+    public function testInterpratationClosureReturnsCorrectly()
     {
         $column = new Daveawb\Datatables\Columns\Column($fields = array(
                 "id", function($field, $dbData)
@@ -77,14 +97,11 @@ class ColumnTest extends DatatablesTestCase {
         );
         
         $dbData = new stdClass();
-        $dbData->first_name = "David";
-        $dbData->last_name = "Barker";
-        $dbData->username = "daveawb";
+        $dbData->id = 1;
         
-        $data = $column->interpret("first_name", $dbData);
+        $column->interpret("id", $dbData);
         
-        $this->assertInstanceOf("Closure", $data);
-        $this->assertEquals($data(1, $dbData), '<button data-id="1">Example</button>');
+        $this->assertEquals('<button data-id="1">Example</button>', $dbData->id);
     }
     
     public function testDataIsReturnedAfterRunningThroughInterpreter()

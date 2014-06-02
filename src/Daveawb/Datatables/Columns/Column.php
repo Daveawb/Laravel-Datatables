@@ -91,7 +91,7 @@ class Column {
      */ 
     public function interpret($field, &$data)
     {
-        if (count($this->interpret) < 1)
+        if (count($this->interpret) < 1 && is_null($this->closure))
             return $data->{$field};
             
         foreach($this->interpret as $class => $args)
@@ -108,7 +108,7 @@ class Column {
         
         if ($this->closure instanceof Closure)
         {
-            call_user_func_array($this->closure, array($field, $data))
+            $data->{$field} = call_user_func_array($this->closure, array($field, $data));
         }
     }
     
