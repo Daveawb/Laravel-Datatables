@@ -43,10 +43,10 @@ return array(
         "connections" => array(
             
             "mongo" => array(
-                'host'     => 'localhost',
+                'host'     => '127.0.0.1',
                 'port'     => 27017,
-                'username' => 'username',
-                'password' => 'password',
+                //'username' => 'username',
+                //'password' => 'password',
                 'database' => 'database',
                 'options'  => array()
             ),

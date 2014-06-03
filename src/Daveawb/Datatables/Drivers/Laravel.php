@@ -32,7 +32,7 @@ class Laravel extends Driver {
             if ( strlen($column->sSearch) > 0 )
             	$q = $this->buildWhereClause($q, $column);
 
-            if ($column->bSortable && (isset($column->sort) && $column->sort))
+            if ($column->bSortable && $column->sort)
                 $q = $q->orderBy($column->fields[0], $column->sort_dir);
         }
 
@@ -119,7 +119,16 @@ class Laravel extends Driver {
     {
         if ( ! $query instanceof Model && ! $query instanceof Builder && ! $query instanceof Fluent)
         {
-            throw new ErrorException(sprintf("Argument 1 passed to %s must be an instance of %s, %s, or %s, %s given", get_class($this), "Illuminate\Database\Eloquent\Model", "Illuminate\Database\Eloquent\Builder", "Illuminate\Database\Query\Builder", get_class($query)));
+            throw new ErrorException(
+                sprintf(
+                    "Argument 1 passed to %s must be an instance of %s, %s, or %s, %s given", 
+                    get_class($this), 
+                    "Illuminate\Database\Eloquent\Model", 
+                    "Illuminate\Database\Eloquent\Builder", 
+                    "Illuminate\Database\Query\Builder", 
+                    get_class($query)
+                )
+            );
         }
 
         $this->query = $query;

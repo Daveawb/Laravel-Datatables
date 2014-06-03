@@ -16,7 +16,9 @@ class Column {
      * The columns attributes
      * @var {Array}
      */
-    protected $attributes = array();
+    protected $attributes = array(
+        "sort" => false
+    );
     
     /**
      * Interpretation data
