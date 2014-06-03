@@ -20,24 +20,6 @@ class Laravel extends Driver {
     protected $builders = array();
 
     /**
-     * Entry point for this class, this method is called first before any other methods
-	 * do setup for the query class here.
-     * @param {Mixed} Query builder
-     * @param {Object} Daveawb\Datatables\Columns\Factory
-     */
-    public function query($query)
-    {
-        if ( ! $query instanceof Model && ! $query instanceof Builder && ! $query instanceof Fluent)
-        {
-            throw new ErrorException(sprintf("Argument 1 passed to %s must be an instance of %s, %s, or %s, %s given", get_class($this), "Illuminate\Database\Eloquent\Model", "Illuminate\Database\Eloquent\Builder", "Illuminate\Database\Query\Builder", get_class($query)));
-        }
-
-        $this->query = $query;
-
-        $this->cacheQuery();
-    }
-
-    /**
      * Build the query
      * @return {Mixed} Configured query builder
      */
@@ -57,22 +39,6 @@ class Laravel extends Driver {
         $this->cacheQuery();
 
         return $q->skip($this->factory->input->iDisplayStart)->limit($this->factory->input->iDisplayLength);
-    }
-
-    /**
-     * Get the results from the built query
-     * @return {Array} an array formatted for datatables
-     */
-    public function get()
-    {
-        $data = $this->build()->get();
-
-        return array(
-            "sEcho" => $this->factory->input->sEcho,
-            "aaData" => $data,
-            "iTotalDisplayRecords" => $this->getCount(1),
-            "iTotalRecords" => $this->getCount(0)
-        );
     }
 	
 	/**
@@ -102,7 +68,32 @@ class Laravel extends Driver {
 
         $this->builders[] = clone($query);
     }
+    
+    /**
+     * Inject configuration into the driver
+     * @param {Array}
+     */
+    public function config(array $config)
+    {
+        $this->config = $config;
+    }
 
+    /**
+     * Get the results from the built query
+     * @return {Array} an array formatted for datatables
+     */
+    public function get()
+    {
+        $data = $this->build()->get();
+
+        return array(
+            "sEcho" => $this->factory->input->sEcho,
+            "aaData" => $data,
+            "iTotalDisplayRecords" => $this->getCount(1),
+            "iTotalRecords" => $this->getCount(0)
+        );
+    }
+    
     /**
      * Get the count by retrieving a cached queries results
      * @param {Integer} Index of cached query
@@ -116,5 +107,23 @@ class Laravel extends Driver {
 
         return (int)$query->first()->aggregate;
     }
+    
+    
+    /**
+     * Entry point for this class, this method is called first before any other methods
+     * do setup for the query class here.
+     * @param {Mixed} Query builder
+     * @param {Object} Daveawb\Datatables\Columns\Factory
+     */
+    public function query($query)
+    {
+        if ( ! $query instanceof Model && ! $query instanceof Builder && ! $query instanceof Fluent)
+        {
+            throw new ErrorException(sprintf("Argument 1 passed to %s must be an instance of %s, %s, or %s, %s given", get_class($this), "Illuminate\Database\Eloquent\Model", "Illuminate\Database\Eloquent\Builder", "Illuminate\Database\Query\Builder", get_class($query)));
+        }
 
+        $this->query = $query;
+
+        $this->cacheQuery();
+    }
 }

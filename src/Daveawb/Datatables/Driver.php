@@ -15,6 +15,12 @@ abstract class Driver {
      * @var {Object} Daveawb\Datatables\Columns\Factory
      */
     protected $factory;
+    
+    /**
+     * Configuration options
+     * @var {Array}
+     */
+    protected $config;
 	
     /**
      * Set the query object on the driver
@@ -28,6 +34,12 @@ abstract class Driver {
      * @return {Array} an array formatted for datatables
      */
     abstract public function get();
+    
+    /**
+     * Inject configuration options into the driver
+     * @var {Array} of configuration options
+     */
+    abstract public function config(array $config);
     
     /**
      * Set the factory object on the driver
