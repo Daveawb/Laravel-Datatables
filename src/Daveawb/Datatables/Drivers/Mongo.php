@@ -134,6 +134,15 @@ class Mongo extends Driver {
     }
     
     /**
+     * Get the configuration name for this driver
+     * @return {String}
+     */
+    protected function getConfigName()
+    {
+        return "mongo";
+    }
+    
+    /**
      * Create a DSN string from a configuration.
      *
      * @param  array   $config
@@ -200,7 +209,7 @@ class Mongo extends Driver {
         
         if (isset($closure))
         {
-            $this->searchTerms = call_user_func($closure, $this->searchTerms);
+            $this->searchTerms = call_user_func($closure);
         }
     }
 }   

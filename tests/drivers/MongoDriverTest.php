@@ -49,14 +49,16 @@ class MongoDriverTest extends DatatablesTestCase {
     
     public function testQueryAcceptsArrayWithClosureAsSecondArg()
     {
-        $this->driver->query(array("testcollection", function($find)
+        $this->driver->query(array("testcollection", function()
         {
-            $find['$and'] = "searching";
-            
-            return $find;
+            return array(
+                '$or' => array(
+                    array("first_name" => "Simon")
+                )
+            );
         }));
         
-        $this->assertEquals("searching", $this->getProperty($this->driver, "searchTerms")['$and']);
+        $this->assertEquals(array(array("first_name" => "Simon")), $this->getProperty($this->driver, "searchTerms")['$or']);
     }
     
     /**
@@ -240,10 +242,10 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $driver->factory($factory);
         
-        $driver->query(array("users", function($find) {
-            $find["first_name"] = "Simon";
-            
-            return $find;
+        $driver->query(array("users", function() {
+            return array(
+                "first_name" => "Simon"
+            );
         }));
         
         $result = $driver->get();

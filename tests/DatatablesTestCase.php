@@ -31,6 +31,20 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
 		// To get the validator working with orchestra we need to 
 		// manually bind a dependency to Symfonys TranslatorInterface.
 		$translator = new Symfony\Component\Translation\Translator("en", new Symfony\Component\Translation\MessageSelector);
+        $this->app->bind("Illuminate\Config\LoaderInterface", function($app) {
+            return new Illuminate\Config\FileLoader(
+                $app['files'],
+                __DIR__ . '/../src/config'
+            );
+        });
+        
+        $this->app->bind("Illuminate\Config\Repository", function($app) {
+            return new Illuminate\Config\Repository(
+                $app->make("Illuminate\Config\LoaderInterface"),
+                 "testing"
+            );
+        });
+        
 		$this->app->instance("Symfony\Component\Translation\TranslatorInterface", $translator);
     }
 	

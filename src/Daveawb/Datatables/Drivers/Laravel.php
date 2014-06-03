@@ -95,6 +95,15 @@ class Laravel extends Driver {
     }
     
     /**
+     * Get the config name for this driver
+     * @return {String}
+     */
+    protected function getConfigName()
+    {
+        return "laravel";
+    }
+    
+    /**
      * Get the count by retrieving a cached queries results
      * @param {Integer} Index of cached query
      * @return {Integer} Row count for the query

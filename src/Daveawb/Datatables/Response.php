@@ -19,7 +19,9 @@ class Response {
             {
                 $column->interpret($column->fields[0], $result);
                 
-                $filtered[$rowKey][$column->mDataProp] = $result->{$column->fields[0]};
+                $filtered[$rowKey][$column->mDataProp] = is_array($result) ?
+                    $result[$column->fields[0]] :
+                    $result->{$column->fields[0]};
             }
         }
         

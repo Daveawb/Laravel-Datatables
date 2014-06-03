@@ -3,7 +3,10 @@ namespace Daveawb\Datatables;
 
 use Daveawb\Datatables\Columns\Factory;
 
+use Illuminate\Config\Repository;
+
 abstract class Driver {
+    
     /**
      * Instance of the query builder to use
      * @var {Mixed}
@@ -21,7 +24,7 @@ abstract class Driver {
      * @var {Array}
      */
     protected $config;
-	
+    
     /**
      * Set the query object on the driver
      * @param {Mixed} Query builder
@@ -37,9 +40,15 @@ abstract class Driver {
     
     /**
      * Inject configuration options into the driver
-     * @var {Array} of configuration options
+     * @param {Array} of configuration options
      */
     abstract public function config(array $config);
+    
+    /**
+     * Get the configuration name used for this driver
+     * @return {String}
+     */
+    abstract protected function getConfigName();
     
     /**
      * Set the factory object on the driver
@@ -48,5 +57,20 @@ abstract class Driver {
     public function factory(Factory $factory)
     {
         $this->factory = $factory;
+    }
+    
+    /**
+     * Set the config class on this driver
+     * @param {Object} Illuminate\Config\Repository
+     */
+    public function setConfig(Repository $config)
+    {
+        $driverConfig = $this->getConfigName();
+        
+        $cfgArray = $driverConfig === "laravel" ?
+            array() :
+            $config->get("datatables::database.connections.{$driverConfig}");
+        
+        $this->config($cfgArray);
     }
 }
