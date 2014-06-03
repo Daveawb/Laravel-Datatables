@@ -1,6 +1,5 @@
 <?php
 
-
 return array(
 
    /*
@@ -50,7 +49,7 @@ return array(
                 'username' => 'username',
                 'password' => 'password',
                 'database' => 'database'
-            )
-        )
-    )
+            ),
+        ),
+    ),
 );
