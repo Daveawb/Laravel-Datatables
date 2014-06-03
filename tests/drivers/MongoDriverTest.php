@@ -106,7 +106,7 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertInstanceOf("MongoCursor", $result["aaData"]);
+        $this->assertTrue(is_array($result["aaData"]));
         $this->assertEquals(2, $result['iTotalRecords']);
         $this->assertEquals(2, $result['iTotalDisplayRecords']);
     }
@@ -137,7 +137,6 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertInstanceOf("MongoCursor", $result["aaData"]);
         $this->assertEquals(2, $result['iTotalRecords']);
         $this->assertEquals(1, $result['iTotalDisplayRecords']);
         
@@ -174,12 +173,11 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertInstanceOf("MongoCursor", $result["aaData"]);
         $this->assertEquals(2, $result['iTotalRecords']);
         $this->assertEquals(2, $result['iTotalDisplayRecords']);
         
-        $value = $result['aaData']->getNext();
-        
+        $value = $result['aaData'][0];
+        //dd($value);
         $this->assertEquals("David", $value['first_name']);
         $this->assertEquals("Barker", $value['last_name']);
     }
@@ -210,11 +208,10 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertInstanceOf("MongoCursor", $result["aaData"]);
         $this->assertEquals(2, $result['iTotalRecords']);
         $this->assertEquals(2, $result['iTotalDisplayRecords']);
         
-        $value = $result['aaData']->getNext();
+        $value = $result['aaData'][0];
         
         $this->assertEquals("Simon", $value['first_name']);
         $this->assertEquals("Holloway", $value['last_name']);
@@ -250,13 +247,48 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertInstanceOf("MongoCursor", $result["aaData"]);
         $this->assertEquals(1, $result['iTotalRecords']);
         $this->assertEquals(1, $result['iTotalDisplayRecords']);
         
-        $value = $result['aaData']->getNext();
+        $value = $result['aaData'][0];
         
         $this->assertEquals("Simon", $value['first_name']);
         $this->assertEquals("Holloway", $value['last_name']);
+    }
+
+    public function testDriverInEndToEndScenario()
+    {
+        $this->seedMongo();
+        
+        $this->app['config']->set("datatables::database.connections.mongo.database", "datatablestests");
+        
+        $this->app['request']->replace($this->testData);
+        
+        $datatable = new Daveawb\Datatables\Datatable(
+            new Daveawb\Datatables\Columns\Factory(
+                new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+                $this->app['validator']
+            ),
+            new Daveawb\Datatables\Drivers\Laravel,
+            new Illuminate\Http\JsonResponse,
+            $this->app['config']
+        );
+        
+        $datatable->driver($this->app->make("Daveawb\Datatables\Drivers\Mongo"));
+        
+        $datatable->query("users");
+        
+        $datatable->columns(array(
+            array("first_name", array("append" => "%", "prepend" => "Mr, ", "combine" => "first_name,last_name, ")),
+            array("_id", function($field, $data) {
+                return (string)$data[$field];
+            })
+        ));
+        
+        $result = $datatable->result();
+        
+        $data = json_decode($result->getContent(), true);
+        
+        $this->assertEquals($data['aaData'][0][0], "Mr David% Barker");
     }
 }

@@ -179,10 +179,10 @@ class Mongo extends Driver {
     {
         return array(
             "sEcho" => $this->factory->input->sEcho,
-            "aaData" => $cursor,
+            "aaData" => array_values(iterator_to_array($cursor)),
             "iTotalDisplayRecords" => $this->filteredCount,
             "iTotalRecords" => $this->totalCount
-        );    
+        );
     }
     
     /**

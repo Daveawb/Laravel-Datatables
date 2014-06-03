@@ -11,9 +11,6 @@
          syntaxCheck="true"
 >
     <testsuites>
-        <testsuite name="laravel">
-            <directory suffix=".php">./tests/laravel</directory>
-        </testsuite>
         <testsuite name="columns">
             <directory suffix=".php">./tests/columns</directory>
         </testsuite>

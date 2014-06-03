@@ -88,7 +88,7 @@ class Laravel extends Driver {
 
         return array(
             "sEcho" => $this->factory->input->sEcho,
-            "aaData" => $data,
+            "aaData" => $data->toArray(),
             "iTotalDisplayRecords" => $this->getCount(1),
             "iTotalRecords" => $this->getCount(0)
         );

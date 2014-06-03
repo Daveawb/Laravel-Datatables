@@ -14,6 +14,6 @@ class Append implements Expression {
     {
         $separator = count($args) > 1 ? $args[1] : '';
         
-        return $this->data->{$this->fields[0]} . $separator . $args[0];
+        return $this->data[$this->fields[0]] . $separator . $args[0];
     }
 }

@@ -22,11 +22,11 @@ class Combine implements Expression {
         {
             if ($this->inRange($arg, 0, $count))
             {
-                $output .= $this->data->{$this->fields[$arg]};
+                $output .= $this->data[$this->fields[$arg]];
             }
             else
             {
-                $output .= $this->data->{$arg};
+                $output .= $this->data[$arg];
             }
             
             $output .= $separator;

@@ -14,6 +14,6 @@ class Prepend implements Expression {
     {
         $separator = count($args) > 1 ? $args[1] : '';
         
-        return $args[0] . $separator . $this->data->{$this->fields[0]};
+        return $args[0] . $separator . $this->data[$this->fields[0]];
     }
 }

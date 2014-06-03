@@ -4,10 +4,11 @@ class PrependTest extends DatatablesTestCase {
     
     public function testDataIsPrependedToEndOfFirstField()
     {
-        $data = new stdClass();
-        $data->first_name = "David";
-        $data->last_name = "Barker";
-        $data->username = "daveawb";
+        $data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb"
+        );
         
         $combine = new Daveawb\Datatables\Columns\Expressions\Prepend(array(
             "first_name",
@@ -23,10 +24,11 @@ class PrependTest extends DatatablesTestCase {
     
     public function testDataIsPrependedToEndOfFirstFieldWithSeperator()
     {
-        $data = new stdClass();
-        $data->first_name = "David";
-        $data->last_name = "Barker";
-        $data->username = "daveawb";
+        $data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb"
+        );
         
         $combine = new Daveawb\Datatables\Columns\Expressions\Prepend(array(
             "first_name",
