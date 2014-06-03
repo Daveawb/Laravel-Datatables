@@ -41,20 +41,22 @@ class Laravel extends Driver {
         return $q->skip($this->factory->input->iDisplayStart)->limit($this->factory->input->iDisplayLength);
     }
 	
-	/**
-	 * Build a where clause for on the query
-	 */
-	protected function buildWhereClause($query, $column)
-	{
-		$evaluate = $query;
-		
-		if ($evaluate instanceof Builder)
-			$evaluate = $query->getQuery();
-		
-		return ( ! isset($evaluate->wheres) && ! is_array($evaluate->wheres) ) ?
-			$query->where($column->fields[0], 'LIKE', '%' . $column->sSearch . '%') :
-			$query->orWhere($column->fields[0], 'LIKE', '%' . $column->sSearch . '%');
-	}
+    /**
+     * Add a where clause on the query object
+     * @param {Object} Illuminate\Database\Eloquent\Builder || Illuminate\Database\Query\Builder
+     * @param {Object} Daveawb\Datatables\Columns\Column
+     */
+    protected function buildWhereClause($query, $column)
+    {
+	$evaluate = $query;
+	
+	if ($evaluate instanceof Builder)
+	    $evaluate = $query->getQuery();
+	
+	return ( ! isset($evaluate->wheres) && ! is_array($evaluate->wheres) ) ?
+	    $query->where($column->fields[0], 'LIKE', '%' . $column->sSearch . '%') :
+	    $query->orWhere($column->fields[0], 'LIKE', '%' . $column->sSearch . '%');
+    } 
 
     /**
      * Cache the query in its current state
@@ -70,11 +72,15 @@ class Laravel extends Driver {
     }
     
     /**
-     * Inject configuration into the driver
+     * Inject configuration into the driver. Usually this is the primary
+     * entry point into a driver. This method is called on construct of
+     * the main director class || when a driver is swapped in.
      * @param {Array}
      */
     public function config(array $config)
     {
+    	// This driver has no config as it only accepts pre-configured
+    	// Query builders or an Eloquent builder.
         $this->config = $config;
     }
 
@@ -122,7 +128,6 @@ class Laravel extends Driver {
      * Entry point for this class, this method is called first before any other methods
      * do setup for the query class here.
      * @param {Mixed} Query builder
-     * @param {Object} Daveawb\Datatables\Columns\Factory
      */
     public function query($query)
     {
