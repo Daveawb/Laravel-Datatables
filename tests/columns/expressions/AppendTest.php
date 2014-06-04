@@ -4,17 +4,18 @@ class AppendTest extends DatatablesTestCase {
     
     public function testDataIsAppendedToEndOfFirstField()
     {
-        $data = new stdClass();
-        $data->first_name = "David";
-        $data->last_name = "Barker";
-        $data->username = "daveawb";
+        $data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb"
+        );
         
-        $combine = new Daveawb\Datatables\Columns\Expressions\Append(array(
+        $append = new Daveawb\Datatables\Columns\Expressions\Append(array(
             "first_name",
             "last_name"
         ), $data);
         
-        $result = $combine->evaluate(array(
+        $result = $append->evaluate(array(
             "append"
         ));
         
@@ -23,20 +24,61 @@ class AppendTest extends DatatablesTestCase {
     
     public function testDataIsAppendedToEndOfFirstFieldWithSeperator()
     {
-        $data = new stdClass();
-        $data->first_name = "David";
-        $data->last_name = "Barker";
-        $data->username = "daveawb";
+        $data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb"
+        );
         
-        $combine = new Daveawb\Datatables\Columns\Expressions\Append(array(
+        $append = new Daveawb\Datatables\Columns\Expressions\Append(array(
             "first_name",
             "last_name"
         ), $data);
         
-        $result = $combine->evaluate(array(
+        $result = $append->evaluate(array(
             "append", " "
         ));
         
         $this->assertEquals("David append", $result);
     }
+	
+	public function testDataPassedAsAnArrayIsEvaluatedAndAppended()
+	{
+		$data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb",
+            "title" => "Mr"
+        );
+        
+        $append = new Daveawb\Datatables\Columns\Expressions\Append(array(
+            "title",
+        ), $data);
+        
+        $result = $append->evaluate(array(
+            array("first_name", "last_name", "username")," "
+        ));
+        
+        $this->assertEquals("Mr David Barker daveawb", $result);
+	}
+	
+	public function testDataPassedIsSameInDataOutputFieldData()
+	{
+		$data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb",
+            "title" => "Mr"
+        );
+        
+        $append = new Daveawb\Datatables\Columns\Expressions\Append(array(
+            "first_name",
+        ), $data);
+        
+        $result = $append->evaluate(array(
+            "last_name"," "
+        ));
+        
+        $this->assertEquals("David Barker", $result);
+	}
 }

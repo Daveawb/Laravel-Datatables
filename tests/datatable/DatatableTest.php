@@ -102,7 +102,8 @@ class DatatableTest extends DatatablesTestCase {
         		$this->app['validator']
 			),
 			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse
+			new Illuminate\Http\JsonResponse,
+			$this->app['config']
 		);
 		
         $datatable->columns(array(
@@ -121,7 +122,8 @@ class DatatableTest extends DatatablesTestCase {
         		$this->app['validator']
 			),
 			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse
+			new Illuminate\Http\JsonResponse,
+            $this->app['config']
 		);
 		
         $datatable->columns(array(
@@ -139,7 +141,8 @@ class DatatableTest extends DatatablesTestCase {
         		$this->app['validator']
 			),
 			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse
+			new Illuminate\Http\JsonResponse,
+            $this->app['config']
 		);
 		
 		$datatable->query(new UserModel());
@@ -161,7 +164,8 @@ class DatatableTest extends DatatablesTestCase {
         		$this->app['validator']
 			),
 			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse
+			new Illuminate\Http\JsonResponse,
+            $this->app['config']
 		);
 		
 		$datatable->query(new UserModel());
@@ -202,7 +206,8 @@ class DatatableTest extends DatatablesTestCase {
         		$this->app['validator']
 			),
 			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse
+			new Illuminate\Http\JsonResponse,
+            $this->app['config']
 		);
 		
 		$datatable->query(new UserModel());
@@ -236,7 +241,8 @@ class DatatableTest extends DatatablesTestCase {
         		$this->app['validator']
 			),
 			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse
+			new Illuminate\Http\JsonResponse,
+            $this->app['config']
 		);
 		
 		$datatable->query(new UserModel());
@@ -250,7 +256,7 @@ class DatatableTest extends DatatablesTestCase {
 		
 		$data = json_decode($result->getContent());
 		
-		$this->assertEquals("Englebert", $data->aaData[1][0]);
+		$this->assertEquals("Englebert", $data->aaData[0][0]);
 	}
 	
 	public function testSearchReturnsOnlyResultsWithSearchString()
@@ -269,7 +275,8 @@ class DatatableTest extends DatatablesTestCase {
         		$this->app['validator']
 			),
 			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse
+			new Illuminate\Http\JsonResponse,
+            $this->app['config']
 		);
 		
 		$datatable->query(new UserModel());
@@ -294,7 +301,8 @@ class DatatableTest extends DatatablesTestCase {
                 $this->app['validator']
             ),
             new Daveawb\Datatables\Drivers\Laravel,
-            new Illuminate\Http\JsonResponse
+            new Illuminate\Http\JsonResponse,
+            $this->app['config']
         );
         
         $datatable->query(new UserModel());
@@ -319,7 +327,8 @@ class DatatableTest extends DatatablesTestCase {
                 $this->app['validator']
             ),
             new Daveawb\Datatables\Drivers\Laravel,
-            new Illuminate\Http\JsonResponse
+            new Illuminate\Http\JsonResponse,
+            $this->app['config']
         );
         
         $datatable->query(new UserModel());
@@ -344,7 +353,8 @@ class DatatableTest extends DatatablesTestCase {
                 $this->app['validator']
             ),
             new Daveawb\Datatables\Drivers\Laravel,
-            new Illuminate\Http\JsonResponse
+            new Illuminate\Http\JsonResponse,
+            $this->app['config']
         );
         
         $datatable->query(new UserModel());

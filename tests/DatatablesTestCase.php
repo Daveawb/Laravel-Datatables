@@ -31,6 +31,20 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
 		// To get the validator working with orchestra we need to 
 		// manually bind a dependency to Symfonys TranslatorInterface.
 		$translator = new Symfony\Component\Translation\Translator("en", new Symfony\Component\Translation\MessageSelector);
+        $this->app->bind("Illuminate\Config\LoaderInterface", function($app) {
+            return new Illuminate\Config\FileLoader(
+                $app['files'],
+                __DIR__ . '/../src/config'
+            );
+        });
+        
+        $this->app->bind("Illuminate\Config\Repository", function($app) {
+            return new Illuminate\Config\Repository(
+                $app->make("Illuminate\Config\LoaderInterface"),
+                 "testing"
+            );
+        });
+        
 		$this->app->instance("Symfony\Component\Translation\TranslatorInterface", $translator);
     }
 	
@@ -92,6 +106,33 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
 		
 		$this->setupDatabase();
 	}
+    
+    public function seedMongo()
+    {
+        $driver = new MongoClient("mongodb://127.0.0.1:27017", array());
+        
+        $collection = $driver->datatablestests->users;
+        
+        $collection->drop();
+        
+        $collection->insert(array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb",
+            "created_at" => new MongoDate(),
+            "updated_at" => new MongoDate(),
+            "deleted_at" => null
+        ));
+        
+        $collection->insert(array(
+            "first_name" => "Simon",
+            "last_name" => "Holloway",
+            "username" => "sholloway",
+            "created_at" => new MongoDate(),
+            "updated_at" => new MongoDate(),
+            "deleted_at" => null
+        ));
+    }
 	
 	/**
 	 * Reflection methods. These are used to extract protected/private

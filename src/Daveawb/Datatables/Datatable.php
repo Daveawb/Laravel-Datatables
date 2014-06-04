@@ -3,6 +3,7 @@ namespace Daveawb\Datatables;
 
 use Daveawb\Datatables\Columns\Factory;
 
+use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as FluentBuilder;
@@ -35,11 +36,14 @@ class Datatable {
      * @param {Object} Daveawb\Datatables\Support\Input
      * @return void
      */
-    public function __construct(Factory $factory, Driver $driver, JsonResponse $json)
+    public function __construct(Factory $factory, Driver $driver, JsonResponse $json, Repository $config)
     {
         $this->factory = $factory;
         $this->driver = $driver;
         $this->json = $json;
+        $this->config = $config;
+        
+        $this->driver->setConfig($config);
     }
 
     /**
@@ -82,6 +86,8 @@ class Datatable {
     public function driver(Driver $driver)
     {
         $this->driver = $driver;
+        
+        $this->driver->setConfig($this->config);
     }
     
     /**

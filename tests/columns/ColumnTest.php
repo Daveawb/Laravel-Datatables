@@ -63,7 +63,7 @@ class ColumnTest extends DatatablesTestCase {
         $column = new Daveawb\Datatables\Columns\Column($fields = array(
                 "id", function($field, $dbData)
                 {
-                    return sprintf('<button data-id="%s">Example</button>', $dbData->{$field});
+                    return sprintf('<button data-id="%s">Example</button>', $dbData[$field]);
                 }
             ),
             $settings = array(
@@ -83,7 +83,7 @@ class ColumnTest extends DatatablesTestCase {
         $column = new Daveawb\Datatables\Columns\Column($fields = array(
                 "id", function($field, $dbData)
                 {
-                    return sprintf('<button data-id="%s">Example</button>', $dbData->{$field});
+                    return sprintf('<button data-id="%s">Example</button>', $dbData[$field]);
                 }
             ),
             $settings = array(
@@ -95,12 +95,13 @@ class ColumnTest extends DatatablesTestCase {
             )
         );
         
-        $dbData = new stdClass();
-        $dbData->id = 1;
+        $dbData = array(
+            "id" => 1
+        );
         
         $column->interpret("id", $dbData);
         
-        $this->assertEquals('<button data-id="1">Example</button>', $dbData->id);
+        $this->assertEquals('<button data-id="1">Example</button>', $dbData['id']);
     }
     
     public function testDataIsReturnedAfterRunningThroughInterpreter()
@@ -117,13 +118,14 @@ class ColumnTest extends DatatablesTestCase {
             )
         );
         
-        $dbData = new stdClass();
-        $dbData->first_name = "David";
-        $dbData->last_name = "Barker";
-        $dbData->username = "daveawb";
+        $dbData = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb"
+        );
         
         $data = $column->interpret("first_name", $dbData);
         
-        $this->assertEquals("David Barker", $dbData->first_name);
+        $this->assertEquals("David Barker", $dbData['first_name']);
     }
 }

@@ -20,24 +20,6 @@ class Laravel extends Driver {
     protected $builders = array();
 
     /**
-     * Entry point for this class, this method is called first before any other methods
-	 * do setup for the query class here.
-     * @param {Mixed} Query builder
-     * @param {Object} Daveawb\Datatables\Columns\Factory
-     */
-    public function query($query)
-    {
-        if ( ! $query instanceof Model && ! $query instanceof Builder && ! $query instanceof Fluent)
-        {
-            throw new ErrorException(sprintf("Argument 1 passed to %s must be an instance of %s, %s, or %s, %s given", get_class($this), "Illuminate\Database\Eloquent\Model", "Illuminate\Database\Eloquent\Builder", "Illuminate\Database\Query\Builder", get_class($query)));
-        }
-
-        $this->query = $query;
-
-        $this->cacheQuery();
-    }
-
-    /**
      * Build the query
      * @return {Mixed} Configured query builder
      */
@@ -50,7 +32,7 @@ class Laravel extends Driver {
             if ( strlen($column->sSearch) > 0 )
             	$q = $this->buildWhereClause($q, $column);
 
-            if ($column->bSortable && (isset($column->sort) && $column->sort))
+            if ($column->bSortable && $column->sort)
                 $q = $q->orderBy($column->fields[0], $column->sort_dir);
         }
 
@@ -58,37 +40,23 @@ class Laravel extends Driver {
 
         return $q->skip($this->factory->input->iDisplayStart)->limit($this->factory->input->iDisplayLength);
     }
-
-    /**
-     * Get the results from the built query
-     * @return {Array} an array formatted for datatables
-     */
-    public function get()
-    {
-        $data = $this->build()->get();
-
-        return array(
-            "sEcho" => $this->factory->input->sEcho,
-            "aaData" => $data,
-            "iTotalDisplayRecords" => $this->getCount(1),
-            "iTotalRecords" => $this->getCount(0)
-        );
-    }
 	
-	/**
-	 * Build a where clause for on the query
-	 */
-	protected function buildWhereClause($query, $column)
-	{
-		$evaluate = $query;
-		
-		if ($evaluate instanceof Builder)
-			$evaluate = $query->getQuery();
-		
-		return ( ! isset($evaluate->wheres) && ! is_array($evaluate->wheres) ) ?
-			$query->where($column->fields[0], 'LIKE', '%' . $column->sSearch . '%') :
-			$query->orWhere($column->fields[0], 'LIKE', '%' . $column->sSearch . '%');
-	}
+    /**
+     * Add a where clause on the query object
+     * @param {Object} Illuminate\Database\Eloquent\Builder || Illuminate\Database\Query\Builder
+     * @param {Object} Daveawb\Datatables\Columns\Column
+     */
+    protected function buildWhereClause($query, $column)
+    {
+	$evaluate = $query;
+	
+	if ($evaluate instanceof Builder)
+	    $evaluate = $query->getQuery();
+	
+	return ( ! isset($evaluate->wheres) && ! is_array($evaluate->wheres) ) ?
+	    $query->where($column->fields[0], 'LIKE', '%' . $column->sSearch . '%') :
+	    $query->orWhere($column->fields[0], 'LIKE', '%' . $column->sSearch . '%');
+    } 
 
     /**
      * Cache the query in its current state
@@ -102,7 +70,45 @@ class Laravel extends Driver {
 
         $this->builders[] = clone($query);
     }
+    
+    /**
+     * Inject configuration into the driver. Usually this is the primary
+     * entry point into a driver. This method is called on construct of
+     * the main director class || when a driver is swapped in.
+     * @param {Array}
+     */
+    public function config(array $config)
+    {
+    	// This driver has no config as it only accepts pre-configured
+    	// Query builders or an Eloquent builder.
+        $this->config = $config;
+    }
 
+    /**
+     * Get the results from the built query
+     * @return {Array} an array formatted for datatables
+     */
+    public function get()
+    {
+        $data = $this->build()->get();
+
+        return array(
+            "sEcho" => $this->factory->input->sEcho,
+            "aaData" => $data->toArray(),
+            "iTotalDisplayRecords" => $this->getCount(1),
+            "iTotalRecords" => $this->getCount(0)
+        );
+    }
+    
+    /**
+     * Get the config name for this driver
+     * @return {String}
+     */
+    protected function getConfigName()
+    {
+        return "laravel";
+    }
+    
     /**
      * Get the count by retrieving a cached queries results
      * @param {Integer} Index of cached query
@@ -116,5 +122,31 @@ class Laravel extends Driver {
 
         return (int)$query->first()->aggregate;
     }
+    
+    
+    /**
+     * Entry point for this class, this method is called first before any other methods
+     * do setup for the query class here.
+     * @param {Mixed} Query builder
+     */
+    public function query($query)
+    {
+        if ( ! $query instanceof Model && ! $query instanceof Builder && ! $query instanceof Fluent)
+        {
+            throw new ErrorException(
+                sprintf(
+                    "Argument 1 passed to %s must be an instance of %s, %s, or %s, %s given", 
+                    get_class($this), 
+                    "Illuminate\Database\Eloquent\Model", 
+                    "Illuminate\Database\Eloquent\Builder", 
+                    "Illuminate\Database\Query\Builder", 
+                    get_class($query)
+                )
+            );
+        }
 
+        $this->query = $query;
+
+        $this->cacheQuery();
+    }
 }
