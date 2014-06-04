@@ -24,16 +24,25 @@ class Combine implements Expression {
             {
                 $output .= $this->data[$this->fields[$arg]];
             }
-            else
+			elseif(array_key_exists($arg, $this->data))
             {
                 $output .= $this->data[$arg];
             }
+			else
+			{
+				$output .= $arg;
+			}
             
             $output .= $separator;
         }
         
         return rtrim($output, $separator);
     }
+	
+	public function plain($args = array())
+	{
+		return $this->evaluate($args);
+	}
     
     private function inRange($predicate, $start = 0, $stop = 0)
     {
@@ -42,6 +51,6 @@ class Combine implements Expression {
             return $predicate <= $stop && $predicate >= $start;
         }
         
-        return null;
+        return false;
     }
 }

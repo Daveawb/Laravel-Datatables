@@ -41,4 +41,26 @@ class PrependTest extends DatatablesTestCase {
         
         $this->assertEquals("prepend David", $result);
     }
+	
+	public function testDataPassedAsAnArrayIsEvaluatedAndAppended()
+	{
+		$data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb",
+            "title" => "Mr"
+        );
+        
+        $combine = new Daveawb\Datatables\Columns\Expressions\Prepend(array(
+            "first_name",
+            "last_name"
+        ), $data);
+        
+        $result = $combine->evaluate(array(
+            array("prepended item:","title", "prepended to"), " "
+        ));
+        
+        $this->assertEquals("prepended item: Mr prepended to David", $result);
+	}
+	
 }
