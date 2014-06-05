@@ -301,3 +301,22 @@ Checkout the abstract driver class if you haven't already. Make sure that your d
 There are a full suite of tests written to make sure that this project works as expected. If you want to run the tests you will need to be running on a Linux OS with SQLite3 and PHPUnit. The tests are portable to mySQL however as it stands there is no support for it in the project.
 
 If you wish to contribute to the project only pull requests that have been properly tested and commented will be accepted.
+
+#Changelog
+**0.3.0**
+- Config added, package now needs config published to set database defaults for custom drivers
+- Interpreters updated to accept field names
+- Database driver interface added
+- MongoDB database driver added
+
+
+**0.2.6**
+- Append interpreter added
+- Prepend interpreter added
+- Closure capability for columns added
+
+**0.2.0**
+- Column interpreter language and decoration now included
+- Combine interpreter added
+- Driver interface now included for custom driver creation (work in progress)
+- Fixed numerous bugs
