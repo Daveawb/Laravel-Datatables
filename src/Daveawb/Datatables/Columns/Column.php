@@ -16,7 +16,9 @@ class Column {
      * The columns attributes
      * @var {Array}
      */
-    protected $attributes = array();
+    protected $attributes = array(
+        "sort" => false
+    );
     
     /**
      * Interpretation data
@@ -80,7 +82,7 @@ class Column {
     public function interpret($field, &$data)
     {
         if (count($this->interpret) < 1 && is_null($this->closure))
-            return $data->{$field};
+            return $data[$field];
             
         foreach($this->interpret as $class => $args)
 		{
@@ -90,13 +92,13 @@ class Column {
             {
                 $reflector = new ReflectionClass('Daveawb\\Datatables\\Columns\\Expressions\\' . $class);
                 $interpreter = $reflector->newInstanceArgs(array($this->fields, $data));
-                $data->{$field} = $interpreter->evaluate($args);
+                $data[$field] = $interpreter->evaluate($args);
             }
         }
         
         if ($this->closure instanceof Closure)
         {
-            $data->{$field} = call_user_func_array($this->closure, array($field, $data));
+            $data[$field] = call_user_func_array($this->closure, array($field, $data));
         }
     }
     

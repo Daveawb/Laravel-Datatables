@@ -13,13 +13,14 @@ class Response {
     {
         $filtered = array();
         
-        foreach($this->data as $rowKey => $result)
+        for ($i = 0; $i < count($this->data); $i++)
+        //foreach($this->data as $rowKey => $result)
         {
             foreach($this->columns as $key => $column)
             {
-                $column->interpret($column->fields[0], $result);
+                $column->interpret($column->fields[0], $this->data[$i]);
                 
-                $filtered[$rowKey][$column->mDataProp] = $result->{$column->fields[0]};
+                $filtered[$i][$column->mDataProp] = $this->data[$i][$column->fields[0]];
             }
         }
         

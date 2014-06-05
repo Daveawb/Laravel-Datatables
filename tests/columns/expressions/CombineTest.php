@@ -4,10 +4,11 @@ class CombineTest extends DatatablesTestCase {
     
     public function testCombineTakesInNumericIndexes()
     {
-        $data = new stdClass();
-        $data->first_name = "David";
-        $data->last_name = "Barker";
-        $data->username = "daveawb";
+        $data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb"
+        );
         
         $combine = new Daveawb\Datatables\Columns\Expressions\Combine(array(
             "first_name",
@@ -24,10 +25,11 @@ class CombineTest extends DatatablesTestCase {
     
     public function testCombineTakesInFieldNames()
     {
-        $data = new stdClass();
-        $data->first_name = "David";
-        $data->last_name = "Barker";
-        $data->username = "daveawb";
+        $data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb"
+        );
         
         $combine = new Daveawb\Datatables\Columns\Expressions\Combine(array(
             "first_name",
