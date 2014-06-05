@@ -39,6 +39,10 @@ Open up `config/app.php` and add the followng to the service providers array.
 ````
 "Daveawb\Datatables\DatatablesServiceProvider"
 ````
+
+##Publish package configuration
+From the command line `php artisan config:publish daveawb\datatables`
+
 ##Add the Laravel facade (optional)
 
 Add the following to your `config/app.php` alias' array.
