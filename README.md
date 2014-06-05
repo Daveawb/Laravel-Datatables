@@ -138,6 +138,7 @@ array(
     )
 );
 ````
+**If your data to append === a key in the data from the database, it will be swapped out for that value**
 
 ####Prepend
 Prepend takes two arguments, the value to prepend and an optional separator.
@@ -157,6 +158,8 @@ array(
     )
 );
 ````
+
+**If your data to prepend === a key in the data from the database, it will be swapped out for that value**
 
 ####Combine
 ````php
@@ -235,10 +238,60 @@ array(
 
 Please note that to date the second field is not subject to any search, ordering or any other database related functionality. This will more than likely be added in the future.
 
+#Custom database drivers
+The built in driver will allow you to use Eloquent models and builders as well as standard Query builders as the base query input into the package. Each driver extends `Daveawb\Datatables\Driver` that sets standard methods for all drivers such as setting the column factory and implements abstract methods.
+
+There are two drivers that are bundled with this package:
+- The default Laravel driver
+- MongoDB driver
+
+Any driver can be swapped in to replace the default driver at runtime using the `driver` method.
+
+##Using the MongoDB driver
+
+````php
+$datatable = App::make("Daveawb\Datatables\Datatable");
+
+$datatable->driver(new Daveawb\Datatables\Drivers\Mongo());
+
+````
+
+Rather than using the `query` method to pass in an instance of Eloquent or a Query builder, we have a few different options for Mongo.
+
+###Configuration
+If you haven't already published the packages config, now is a good time to do it. From the command line `php artisan config:publish daveawb/datatables`.
+
+The configuration file has settings for your MongoDB database, replica sets and multiple servers are supported as well as authorisation, just set the configuration options accordingly.
+
+###Building the query
+
+####Using a collection
+````php
+$datatable->query("collection"); // Pass in a collection name
+````
+
+####Setting predefined query data
+````php
+$datatable->query(array("collection", function()
+{
+    return array(
+        '$or' => array(
+            array("first_name" : "David")
+        )
+    );
+});
+````
+**The closure must always return an array**
+
+####Getting results
+Everything else is exactly the same, set columns with interpreters / decorators any way you wish and just return `$datatable->result()` to get all your results formatted in datatables style.
+
+##Building your own custom driver
+Checkout the abstract driver class if you haven't already. Make sure that your driver implements all the methods it needs. At a later date there will be a detailed wiki entry on how to create custom database drivers with ease. For now take a look at how the two pre-packaged drivers work to get an idea how your driver needs to get data and return it.
+
 #Roadmap
 - Support for dataTables 1.10.x options
 - A query extension allowing for query manipulation after datatables has taken a count of the fields in the database
-- A driver interface to allow custom database drivers to be used such as MongoDb, Cassandra or CouchDB instead of Eloquent/Fluent.
 
 #Testing
 There are a full suite of tests written to make sure that this project works as expected. If you want to run the tests you will need to be running on a Linux OS with SQLite3 and PHPUnit. The tests are portable to mySQL however as it stands there is no support for it in the project.
