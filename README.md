@@ -13,7 +13,16 @@ For the mean time you will need to use the old 1.9.x API that is still compatabl
 - Set number of rows to return
 - Filtered and Total rows
 
-All components above work without any extra configuration. In a future release there will be the ability to send back named attributes per row such as `DT_RowClass` and any other data you want to return by row or if you want in the top level of the returned JSON for global data.
+## Supported features 
+- MongoDb support
+- Eloquent and Query builder support
+- Custom DB driver support
+- Basic column decoration
+- Custom column decoration / manipulation using closures
+- Basic multi field support
+    - no support for search and ordering on multiple columns yet
+
+All components above require no extra configuration (other than database drivers). In a future release there will be the ability to send back named attributes per row such as `DT_RowClass` and any other data you want to return by row or if you want in the top level of the returned JSON for global data.
 
 #Requirements
 - >= PHP 5.4
