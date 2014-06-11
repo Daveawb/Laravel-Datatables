@@ -6,8 +6,8 @@ class Response {
     {
         $this->columns = $columns;
         $this->results = $results;
-        $this->attributes= $attributes;
         $this->data = $results['aaData'];
+        $this->attributes = $attributes;
     }
     
     public function filter()
@@ -23,7 +23,7 @@ class Response {
                 $filtered[$i][$column->mDataProp] = $this->data[$i][$column->fields[0]];
             }
             
-            $filtered[$i] = array_merge($filtered[$i], $this->attributes);
+            $filtered[$i] = array_merge($filtered[$i], $this->attributes($this->data[$i]));
         }
         
         $this->results['aaData'] = $filtered;
@@ -34,5 +34,20 @@ class Response {
         $this->filter();
         
         return $this->results;
+    }
+    
+    private function attributes($data)
+    {
+        $attributes = $this->attributes;
+        
+        foreach($attributes as &$attribute)
+        {
+            if (in_array($attribute, $data))
+            {
+                $attribute = $data[$attribute];
+            }
+        }
+        
+        return $attributes;
     }
 }
