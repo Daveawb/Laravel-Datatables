@@ -1,8 +1,8 @@
 <?php
 
 class DatatablesTestCase extends Orchestra\Testbench\TestCase {
-	
-	protected $testData = array(
+    
+    protected $testData = array(
         "sEcho" => 1,
         "iDisplayLength" => 10,
         "iDisplayStart" => 0,
@@ -23,14 +23,14 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
         "mDataProp_0" => 0,
         "mDataProp_1" => 1
     );
-	
-	public function setUp()
+    
+    public function setUp()
     {
         parent::setUp();
-		
-		// To get the validator working with orchestra we need to 
-		// manually bind a dependency to Symfonys TranslatorInterface.
-		$translator = new Symfony\Component\Translation\Translator("en", new Symfony\Component\Translation\MessageSelector);
+        
+        // To get the validator working with orchestra we need to 
+        // manually bind a dependency to Symfonys TranslatorInterface.
+        $translator = new Symfony\Component\Translation\Translator("en", new Symfony\Component\Translation\MessageSelector);
         $this->app->bind("Illuminate\Config\LoaderInterface", function($app) {
             return new Illuminate\Config\FileLoader(
                 $app['files'],
@@ -45,67 +45,82 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
             );
         });
         
-		$this->app->instance("Symfony\Component\Translation\TranslatorInterface", $translator);
+        $this->app->instance("Symfony\Component\Translation\TranslatorInterface", $translator);
+        
+        //$this->runMigrations();
     }
-	
-	public function tearDown()
-	{
-		Mockery::close();
-	}
-	
-	protected function getPackageProviders()
+    
+    public function tearDown()
+    {
+        Mockery::close();
+    }
+    
+    protected function getPackageProviders()
     {
         return array('Daveawb\Datatables\DatatablesServiceProvider');
     }
-	
-	protected function getPackageAliases()
+    
+    protected function getPackageAliases()
     {
         return array(
             'Datatable' => 'Daveawb\Datatables\Facades\Datatable'
         );
     }
-	
-	/**
-	 * Setup testing environment for database using sqlite
-	 * @param {Object} Illuminate\Foundation\Application
-	 */
-	protected function getEnvironmentSetUp($app)
+    
+    /**
+     * Setup testing environment for database using sqlite
+     * @param {Object} Illuminate\Foundation\Application
+     */
+    protected function getEnvironmentSetUp($app)
     {
         $app['path.base'] = __DIR__ . '/../src';
 
         $app['config']->set('database.default', 'testing');
-		
-		$app['config']->set('database.connections.setup', array(
+        
+        $app['config']->set('database.connections.setup', array(
             'driver'   => 'sqlite',
             'database' => __DIR__ . '/stubdb.sqlite',
             'prefix'   => '',
         ));
-		
+        
         $app['config']->set('database.connections.testing', array(
             'driver'   => 'sqlite',
             'database' => __DIR__ . '/testdb.sqlite',
             'prefix'   => '',
         ));
     }
-	
-	public function setupDatabase()
-	{
-		exec('rm ' . __DIR__ . '/testdb.sqlite');
-	    exec('cp ' . __DIR__ . '/stubdb.sqlite ' . __DIR__ . '/testdb.sqlite');
-	}
-	
-	public function runMigrations()
-	{
-		// Allow us to call artisan commands
-		$artisan = $this->app->make('artisan');
-		
-		$artisan->call('migrate:refresh', array(
-            '--database' => 'setup',
-            '--path'     => __DIR__ . '/migrations',
+    
+    public function setupDatabase()
+    {
+        exec('rm ' . __DIR__ . '/testdb.sqlite');
+        exec('cp ' . __DIR__ . '/stubdb.sqlite ' . __DIR__ . '/testdb.sqlite');
+    }
+    
+    public function runMigrations()
+    {
+        echo "running migrations";
+        // Allow us to call artisan commands
+        $artisan = $this->app->make('artisan');
+        
+        try {
+            $artisan->call('migrate:install', array(
+                '--database' => 'setup'
+            ));
+        } catch (Exception $e) {
+            
+        }
+        
+        $artisan->call('migrate:reset', array(
+            '--database' => 'setup'
         ));
-		
-		$this->setupDatabase();
-	}
+        
+        $migrate = $artisan->call('migrate', array(
+            '--database' => 'setup',
+            '--path'     => '../tests/migrations/',
+        ));
+        
+        $this->setupDatabase();
+    }
     
     public function seedMongo()
     {
@@ -132,19 +147,37 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
             "updated_at" => new MongoDate(),
             "deleted_at" => null
         ));
+        
+        $collection->insert(array(
+            "first_name" => "Simon",
+            "last_name" => "Cowell",
+            "username" => "scowell",
+            "created_at" => new MongoDate(),
+            "updated_at" => new MongoDate(),
+            "deleted_at" => null
+        ));
+        
+        $collection->insert(array(
+            "first_name" => "Simon",
+            "last_name" => "Pegg",
+            "username" => "spegg",
+            "created_at" => new MongoDate(),
+            "updated_at" => new MongoDate(),
+            "deleted_at" => null
+        ));
     }
-	
-	/**
-	 * Reflection methods. These are used to extract protected/private
-	 * properties or setting protected/private methods to accessible
-	 * allowing direct testing to occur on them.
-	 */
-	public function getDefaultProperty($class, $property)
-	{
-		$class = $this->getReflection($class);
-		$properties = $class->getDefaultProperties();
-		return $properties[$property];
-	}    
+    
+    /**
+     * Reflection methods. These are used to extract protected/private
+     * properties or setting protected/private methods to accessible
+     * allowing direct testing to occur on them.
+     */
+    public function getDefaultProperty($class, $property)
+    {
+        $class = $this->getReflection($class);
+        $properties = $class->getDefaultProperties();
+        return $properties[$property];
+    }    
     
     public function getMethod($class, $method)
     {

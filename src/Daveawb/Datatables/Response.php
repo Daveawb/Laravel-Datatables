@@ -14,7 +14,6 @@ class Response {
         $filtered = array();
         
         for ($i = 0; $i < count($this->data); $i++)
-        //foreach($this->data as $rowKey => $result)
         {
             foreach($this->columns as $key => $column)
             {

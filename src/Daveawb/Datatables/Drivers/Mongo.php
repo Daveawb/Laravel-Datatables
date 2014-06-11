@@ -43,7 +43,10 @@ class Mongo extends Driver {
     {        
         if ($column->bSortable && $column->sort)
         {
-            $this->sortTerms[$column->fields[0]] = $column->sort_dir === "asc" ? 1 : -1;
+            foreach($column->fields as $field)
+            {
+                $this->sortTerms[$field] = $column->sort_dir === "asc" ? 1 : -1;
+            }
         }
     }
     
@@ -62,7 +65,10 @@ class Mongo extends Driver {
             if ( ! isset($this->searchTerms['$or']) )
                 $this->searchTerms['$or'] = array();
             
-            $this->searchTerms['$or'][][$column->fields[0]] = new MongoRegex($search);
+            foreach($column->fields as $field)
+            {
+                $this->searchTerms['$or'][][$field] = new MongoRegex($search);
+            }
         }
     }
     
