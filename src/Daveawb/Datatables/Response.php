@@ -23,7 +23,7 @@ class Response {
                 $filtered[$i][$column->mDataProp] = $this->data[$i][$column->fields[0]];
             }
             
-            $filtered[$i] = array_merge($filtered[$i], $this->attributes($this->data[$i]));
+            $filtered[$i] = array_merge($filtered[$i], $this->attributes($this->results['aaData'][$i]));
         }
         
         $this->results['aaData'] = $filtered;
@@ -42,7 +42,7 @@ class Response {
         
         foreach($attributes as &$attribute)
         {
-            if (in_array($attribute, $data))
+            if (array_key_exists($attribute, $data))
             {
                 $attribute = $data[$attribute];
             }
