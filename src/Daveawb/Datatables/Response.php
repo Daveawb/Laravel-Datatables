@@ -72,7 +72,7 @@ class Response {
         );    
     }
     
-    private function formattedResponse($data)
+    protected function formattedResponse($data)
     {
         return array(
             "aaData" => $data,

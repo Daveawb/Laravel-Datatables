@@ -153,4 +153,27 @@ class InputTest extends DatatablesTestCase {
         $output = $input->get();
     }
 
+    public function testSettingMiscAttributeAppliesToTheGlobalValues()
+    {
+        $this->app['request']->replace($this->testData);
+
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
+        
+        $input->newProperty = "testing";
+        
+        $attributes =  $this->getProperty($input, "attributes");
+        
+        $this->assertEquals($input->newProperty, "testing");
+        $this->assertTrue(array_key_exists("newProperty", $attributes['global']));
+        $this->assertEquals($attributes['global']['newProperty'], "testing");
+    }
+    
+    public function testGettingNonExistantPropertyReturnsNull()
+    {
+        $this->app['request']->replace($this->testData);
+
+        $input = new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']);
+        
+        $this->assertNull($input->nonExistantProperty);
+    }
 }
