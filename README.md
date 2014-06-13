@@ -1,6 +1,8 @@
 Laravel-Datatables [![Build Status](https://travis-ci.org/Daveawb/Laravel-Datatables.svg?branch=master)](https://travis-ci.org/Daveawb/Laravel-Datatables)
 ==================
+
 #Introduction
+-------------
 This project is aimed at anyone using the fantastic dataTables jQuery plugin written by [SpryMedia](http://sprymedia.co.uk/) and Laravel 4.1 or greater. It was written originally for dataTables 1.9.x, however since 1.10.x has now been released with a new API and data structure there will be updates to allow you to make use of the new syntax in the near future. If you haven't used datatables before check it out at [Datatables.net](http://datatables.net/).
 
 For the mean time you will need to use the old 1.9.x API that is still compatable with 1.10.x. You can find the docs at [the legacy Datatables site](http://legacy.datatables.net/).
@@ -16,10 +18,12 @@ For the mean time you will need to use the old 1.9.x API that is still compatabl
 All components above work without any extra configuration. In a future release there will be the ability to send back named attributes per row such as `DT_RowClass` and any other data you want to return by row or if you want in the top level of the returned JSON for global data.
 
 #Requirements
+-------------
 - >= PHP 5.4
 - >= Laravel 4.1.*
 
 #Installation
+-------------
 ##Composer
 Add the following to your composer.json file
 
@@ -52,6 +56,7 @@ Add the following to your `config/app.php` alias' array.
 ````
 
 #Basic Usage
+-------------
 
 ````php
 Route::post('datatable', function()
@@ -243,6 +248,7 @@ array(
 Please note that to date the second field is not subject to any search, ordering or any other database related functionality. This will more than likely be added in the future.
 
 #Custom database drivers
+------------------------
 The built in driver will allow you to use Eloquent models and builders as well as standard Query builders as the base query input into the package. Each driver extends `Daveawb\Datatables\Driver` that sets standard methods for all drivers such as setting the column factory and implements abstract methods.
 
 There are two drivers that are bundled with this package:
@@ -294,10 +300,12 @@ Everything else is exactly the same, set columns with interpreters / decorators 
 Checkout the abstract driver class if you haven't already. Make sure that your driver implements all the methods it needs. At a later date there will be a detailed wiki entry on how to create custom database drivers with ease. For now take a look at how the two pre-packaged drivers work to get an idea how your driver needs to get data and return it.
 
 #Roadmap
+--------
 - Support for dataTables 1.10.x options
 - A query extension allowing for query manipulation after datatables has taken a count of the fields in the database
 
 #Testing
+--------
 There are a full suite of tests written to make sure that this project works as expected. If you want to run the tests you will need to be running on a Linux OS with SQLite3 and PHPUnit. The tests are portable to mySQL however as it stands there is no support for it in the project.
 
 If you wish to contribute to the project only pull requests that have been properly tested and commented will be accepted.
