@@ -15,7 +15,16 @@ For the mean time you will need to use the old 1.9.x API that is still compatabl
 - Set number of rows to return
 - Filtered and Total rows
 
-All components above work without any extra configuration. In a future release there will be the ability to send back named attributes per row such as `DT_RowClass` and any other data you want to return by row or if you want in the top level of the returned JSON for global data.
+## Supported features 
+- MongoDb support
+- Eloquent and Query builder support
+- Custom DB driver support
+- Basic column decoration
+- Custom column decoration / manipulation using closures
+- Basic multi field support
+    - no support for search and ordering on multiple columns yet
+
+All components above require no extra configuration (other than database drivers). In a future release there will be the ability to send back named attributes per row such as `DT_RowClass` and any other data you want to return by row or if you want in the top level of the returned JSON for global data.
 
 #Requirements
 -------------
@@ -30,7 +39,7 @@ Add the following to your composer.json file
 ````json
 {
     "require": {
-        "daveawb/datatables": "v0.2.6-beta"
+        "daveawb/datatables": "0.3.0"
     },
 }
 ````
@@ -304,8 +313,27 @@ Checkout the abstract driver class if you haven't already. Make sure that your d
 - Support for dataTables 1.10.x options
 - A query extension allowing for query manipulation after datatables has taken a count of the fields in the database
 
+<<<<<<< HEAD
 #Testing
 --------
 There are a full suite of tests written to make sure that this project works as expected. If you want to run the tests you will need to be running on a Linux OS with SQLite3 and PHPUnit. The tests are portable to mySQL however as it stands there is no support for it in the project.
+=======
+#Changelog
+**0.3.0**
+- Config added, package now needs config published to set database defaults for custom drivers
+- Interpreters updated to accept field names
+- Database driver interface added
+- MongoDB database driver added
 
-If you wish to contribute to the project only pull requests that have been properly tested and commented will be accepted.
+
+**0.2.6**
+- Append interpreter added
+- Prepend interpreter added
+- Closure capability for columns added
+>>>>>>> 437a222e64d7b402f84a2829d42935419813cc5b
+
+**0.2.0**
+- Column interpreter language and decoration now included
+- Combine interpreter added
+- Driver interface now included for custom driver creation (work in progress)
+- Fixed numerous bugs

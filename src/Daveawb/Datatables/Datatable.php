@@ -110,7 +110,7 @@ class Datatable {
      */
     private function response($results)
     {
-        $response = new Response($this->factory->getColumns(), $results);
+        $response = new Response($this->factory->getColumns(), $results, $this->attributes);
 
         return $this->json->setData($response->get());
     }

@@ -2,10 +2,11 @@
 
 class Response {
     
-    public function __construct(array $columns, array $results)
+    public function __construct(array $columns, array $results, array $attributes)
     {
         $this->columns = $columns;
         $this->results = $results;
+        $this->attributes= $attributes;
         $this->data = $results['aaData'];
     }
     
@@ -14,7 +15,6 @@ class Response {
         $filtered = array();
         
         for ($i = 0; $i < count($this->data); $i++)
-        //foreach($this->data as $rowKey => $result)
         {
             foreach($this->columns as $key => $column)
             {
@@ -22,6 +22,8 @@ class Response {
                 
                 $filtered[$i][$column->mDataProp] = $this->data[$i][$column->fields[0]];
             }
+            
+            $filtered[$i] = array_merge($filtered[$i], $this->attributes);
         }
         
         $this->results['aaData'] = $filtered;

@@ -5,7 +5,7 @@ class DatatableTest extends DatatablesTestCase {
     public function setUp()
     {
         parent::setUp();
-
+        
         $this->app['request']->replace($this->testData);
     }
 
@@ -290,7 +290,7 @@ class DatatableTest extends DatatablesTestCase {
 		
 		$data = json_decode($result->getContent());
 		
-		$this->assertCount(1, $data->aaData);
+		$this->assertCount(5, $data->aaData);
 	}
     
     public function testCombineInterpreterReturnsCorrectData()
@@ -316,7 +316,7 @@ class DatatableTest extends DatatablesTestCase {
         
         $data = json_decode($result->getContent());
         
-        $this->assertEquals($data->aaData[0][0], "Barry Manilow");
+        $this->assertEquals($data->aaData[0][0], "Barry Evans");
     }
     
     public function testAppendInterpreterReturnsCorrectData()
@@ -368,6 +368,6 @@ class DatatableTest extends DatatablesTestCase {
         
         $data = json_decode($result->getContent());
         
-        $this->assertEquals($data->aaData[0][0], "Mr Barry% Manilow");
+        $this->assertEquals($data->aaData[0][0], "Mr Barry% Evans");
     }
 }
