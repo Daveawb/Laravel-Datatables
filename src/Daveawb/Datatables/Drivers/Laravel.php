@@ -100,7 +100,7 @@ class Laravel extends Driver {
      */
     public function get()
     {
-        $data = $this->build()->get()->toArray();
+        return $this->build()->get()->toArray();
     }
     
     /**

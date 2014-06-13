@@ -220,7 +220,7 @@ class DatatableTest extends DatatablesTestCase {
 		$result = $datatable->result();
 		
 		$data = json_decode($result->getContent());
-		
+
 		$this->assertEquals("Barry", $data->aaData[0][0]);
 	}
 	

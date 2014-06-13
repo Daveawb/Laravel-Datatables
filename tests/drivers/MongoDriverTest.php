@@ -288,6 +288,6 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $data = json_decode($result->getContent(), true);
         
-        $this->assertEquals($data[0][0], "Mr David% Barker");
+        $this->assertEquals($data['aaData'][0][0], "Mr David% Barker");
     }
 }
