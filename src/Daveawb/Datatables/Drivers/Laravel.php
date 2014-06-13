@@ -100,14 +100,7 @@ class Laravel extends Driver {
      */
     public function get()
     {
-        $data = $this->build()->get();
-
-        return array(
-            "sEcho" => $this->factory->input->sEcho,
-            "aaData" => $data->toArray(),
-            "iTotalDisplayRecords" => $this->getCount(1),
-            "iTotalRecords" => $this->getCount(0)
-        );
+        $data = $this->build()->get()->toArray();
     }
     
     /**
@@ -118,7 +111,16 @@ class Laravel extends Driver {
     {
         return "laravel";
     }
+        
+    public function getTotalRecords()
+    {
+        return $this->getCount(0);
+    }
     
+    public function getDisplayRecords()
+    {
+        return $this->getCount(1);
+    }
     /**
      * Get the count by retrieving a cached queries results
      * @param {Integer} Index of cached query

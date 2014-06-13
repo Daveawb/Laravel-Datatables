@@ -148,6 +148,16 @@ class Mongo extends Driver {
         return "mongo";
     }
     
+    public function getTotalRecords()
+    {
+        return $this->totalCount;
+    }
+    
+    public function getDisplayRecords()
+    {
+        return $this->filteredCount;
+    }
+    
     /**
      * Create a DSN string from a configuration.
      *
@@ -183,12 +193,7 @@ class Mongo extends Driver {
      */
     protected function prepareResponse($cursor)
     {
-        return array(
-            "sEcho" => $this->factory->input->sEcho,
-            "aaData" => array_values(iterator_to_array($cursor)),
-            "iTotalDisplayRecords" => $this->filteredCount,
-            "iTotalRecords" => $this->totalCount
-        );
+        return array_values(iterator_to_array($cursor));
     }
     
     /**

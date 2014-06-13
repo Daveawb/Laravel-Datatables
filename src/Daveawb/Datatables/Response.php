@@ -1,13 +1,24 @@
 <?php namespace Daveawb\Datatables;
 
+use Daveawb\Datatables\Columns\Factory;
+use Daveawb\Datatables\Driver;
+
+use Illuminate\Config\Repository;
+
 class Response {
     
-    public function __construct(array $columns, array $results, array $attributes)
+    /**
+     * Configuration object
+     * @var {Object} Illuminate\Config\Repository
+     */
+    protected $config;
+    
+    public function __construct(Repository $config, Driver $driver, Factory $columns, array $attributes)
     {
-        $this->columns = $columns;
-        $this->results = $results;
+        $this->config = $config;
+        $this->driver = $driver;
+        $this->columns = $columns->getColumns();
         $this->attributes= $attributes;
-        $this->data = $results['aaData'];
     }
     
     public function filter()
@@ -26,13 +37,25 @@ class Response {
             $filtered[$i] = array_merge($filtered[$i], $this->attributes);
         }
         
-        $this->results['aaData'] = $filtered;
+        $this->results = $filtered;
     }
     
     public function get()
     {
+        $this->data = $this->driver->get();
+        
         $this->filter();
         
         return $this->results;
+    }
+    
+    private function responseArray()
+    {
+        return array(
+            "aaData" => array(),
+            "iTotalRecords" => 0,
+            "iTotalDisplayRecords" => 0,
+            "sEcho" => 0
+        );
     }
 }
