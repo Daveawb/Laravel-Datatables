@@ -21,7 +21,7 @@ namespace Daveawb\Datatables
 		 * of the validator as opposed to a string to save us some typing
 		 * @param Validator $validator failed validator object
 		 */
-		public function __construct($validator)
+		public function __construct(Validator $validator)
 	    {
 			$this->validator = $validator;
 			$this->messages = $validator->messages();
