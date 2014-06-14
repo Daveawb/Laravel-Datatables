@@ -259,6 +259,98 @@ class DatatableTest extends DatatablesTestCase {
 		$this->assertEquals("Englebert", $data->aaData[0][0]);
 	}
 	
+	public function testMultipleFieldsAreSortedAscending()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => false,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "asc"
+		));
+		
+		$expected = array(
+			"Barry Evans",
+			"Barry Manilow",
+			"Barry Scott",
+			"Barry White",
+			"Barry Williams"
+		);
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+        		$this->app['validator']
+			),
+			new Daveawb\Datatables\Drivers\Laravel,
+			new Illuminate\Http\JsonResponse,
+            $this->app['config']
+		);
+		
+		$datatable->query(with(new UserModel())->where('first_name', '=', 'Barry'));
+		
+		$datatable->columns(array(
+			array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
+			array("id")
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		for ($i = 0; $i < count($data->aaData); $i++)
+		{
+			$this->assertEquals($expected[$i], $data->aaData[$i][0]);
+		}
+	}
+	
+	public function testMultipleFieldsAreSortedDescending()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => false,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "desc"
+		));
+		
+		$expected = array(
+			"Barry Evans",
+			"Barry Manilow",
+			"Barry Scott",
+			"Barry White",
+			"Barry Williams"
+		);
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+        		$this->app['validator']
+			),
+			new Daveawb\Datatables\Drivers\Laravel,
+			new Illuminate\Http\JsonResponse,
+            $this->app['config']
+		);
+		
+		$datatable->query(with(new UserModel())->where('first_name', '=', 'Barry'));
+		
+		$datatable->columns(array(
+			array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
+			array("id")
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		for ($i = 0; $i < count($data->aaData); $i++)
+		{
+			$this->assertEquals($expected[4 - $i], $data->aaData[$i][0]);
+		}
+	}
+
 	public function testSearchReturnsOnlyResultsWithSearchString()
 	{
 		$testData = array_merge($this->testData, array(
