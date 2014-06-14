@@ -63,4 +63,25 @@ class PrependTest extends DatatablesTestCase {
         $this->assertEquals("prepended item: Mr prepended to David", $result);
 	}
 	
+	public function testPlainEvaluationDoesNotReturnField()
+	{
+		$data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb",
+            "title" => "Mr"
+        );
+        
+        $combine = new Daveawb\Datatables\Columns\Expressions\Prepend(array(
+            "first_name",
+            "last_name"
+        ), $data);
+        
+        $result = $combine->plain(array(
+            array("prepended item:","title", "prepended to"), " "
+        ));
+        
+        $this->assertEquals("prepended item: Mr prepended to ", $result);
+	}
+	
 }
