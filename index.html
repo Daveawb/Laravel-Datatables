@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Laravel-datatables : A datatables package for Laravel ~4.1.0" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Laravel-datatables</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Daveawb/Laravel-Datatables">View on GitHub</a>
+
+          <h1 id="project_title">Laravel-datatables</h1>
+          <h2 id="project_tagline">A datatables package for Laravel ~4.1.0</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Daveawb/Laravel-Datatables/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Daveawb/Laravel-Datatables/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="laravel-datatables-" class="anchor" href="#laravel-datatables-"><span class="octicon octicon-link"></span></a>Laravel-Datatables </h1>
+
+<p><a href="https://travis-ci.org/Daveawb/Laravel-Datatables"><img src="https://travis-ci.org/Daveawb/Laravel-Datatables.svg?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/r/Daveawb/Laravel-Datatables?branch=development"><img src="https://coveralls.io/repos/Daveawb/Laravel-Datatables/badge.png?branch=development" alt="Coverage Status"></a></p>
+
+<h1>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h1>
+
+<p>This project is aimed at anyone using the fantastic dataTables jQuery plugin written by <a href="http://sprymedia.co.uk/">SpryMedia</a> and Laravel 4.1 or greater. It was written originally for dataTables 1.9.x, however since 1.10.x has now been released with a new API and data structure there will be updates to allow you to make use of the new syntax in the near future. If you haven't used datatables before check it out at <a href="http://datatables.net/">Datatables.net</a>.</p>
+
+<p>For the mean time you will need to use the old 1.9.x API that is still compatable with 1.10.x. You can find the docs at <a href="http://legacy.datatables.net/">the legacy Datatables site</a>.</p>
+
+<h2>
+<a name="supported-datatables-components" class="anchor" href="#supported-datatables-components"><span class="octicon octicon-link"></span></a>Supported datatables components</h2>
+
+<ul>
+<li>Client side column re-ordering</li>
+<li>Per column sorting</li>
+<li>Global search</li>
+<li>Search in a specific column</li>
+<li>Set number of rows to return</li>
+<li>Filtered and Total rows</li>
+</ul><h2>
+<a name="supported-features" class="anchor" href="#supported-features"><span class="octicon octicon-link"></span></a>Supported features</h2>
+
+<ul>
+<li>MongoDb support</li>
+<li>Eloquent and Query builder support</li>
+<li>Custom DB driver support</li>
+<li>Basic column decoration</li>
+<li>Custom column decoration / manipulation using closures</li>
+<li>Basic multi field support
+
+<ul>
+<li>no support for search and ordering on multiple columns yet</li>
+</ul>
+</li>
+</ul><p>All components above require no extra configuration (other than database drivers). In a future release there will be the ability to send back named attributes per row such as <code>DT_RowClass</code> and any other data you want to return by row or if you want in the top level of the returned JSON for global data.</p>
+
+<h1>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h1>
+
+<ul>
+<li>&gt;= PHP 5.4</li>
+<li>&gt;= Laravel 4.1.*</li>
+</ul><h1>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h1>
+
+<h2>
+<a name="composer" class="anchor" href="#composer"><span class="octicon octicon-link"></span></a>Composer</h2>
+
+<p>Add the following to your composer.json file</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"require"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">"daveawb/datatables"</span><span class="p">:</span> <span class="s2">"0.3.*"</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="add-the-laravel-service-provider" class="anchor" href="#add-the-laravel-service-provider"><span class="octicon octicon-link"></span></a>Add the Laravel service provider</h2>
+
+<p>Once you have run a <code>composer update</code> you will need to add the service provider.</p>
+
+<p>Open up <code>config/app.php</code> and add the followng to the service providers array.</p>
+
+<pre><code>"Daveawb\Datatables\DatatablesServiceProvider"
+</code></pre>
+
+<h2>
+<a name="publish-package-configuration" class="anchor" href="#publish-package-configuration"><span class="octicon octicon-link"></span></a>Publish package configuration</h2>
+
+<p>From the command line <code>php artisan config:publish daveawb\datatables</code></p>
+
+<h2>
+<a name="add-the-laravel-facade-optional" class="anchor" href="#add-the-laravel-facade-optional"><span class="octicon octicon-link"></span></a>Add the Laravel facade (optional)</h2>
+
+<p>Add the following to your <code>config/app.php</code> alias' array.</p>
+
+<pre><code>"Datatable" =&gt; "Daveawb\Datatables\Facades\Datatable"
+</code></pre>
+
+<h1>
+<a name="basic-usage" class="anchor" href="#basic-usage"><span class="octicon octicon-link"></span></a>Basic Usage</h1>
+
+<div class="highlight highlight-php"><pre><span class="nx">Route</span><span class="o">::</span><span class="na">post</span><span class="p">(</span><span class="s1">'datatable'</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$datatable</span> <span class="o">=</span> <span class="nx">App</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s2">"Daveawb\Datatables\Datatable"</span><span class="p">);</span>
+
+    <span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="k">new</span> <span class="nx">User</span><span class="p">());</span>
+
+    <span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">columns</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+        <span class="s2">"first_name"</span><span class="p">,</span>
+        <span class="s2">"last_name"</span><span class="p">,</span>
+        <span class="s2">"username"</span><span class="p">,</span>
+        <span class="s2">"verified"</span><span class="p">,</span>
+        <span class="s2">"created_at"</span><span class="p">,</span>
+        <span class="s2">"updated_at"</span>
+    <span class="p">));</span>
+
+    <span class="k">return</span> <span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">result</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>The columns method takes an array in the order you wish to send data back to the client. Each field maps to a field in the database available from the query you've injected.</p>
+
+<p>The query method maps directly to the driver being used, as standard Eloquent models/builders and query builders are accepted:
+<code>Illuminate\Database\Eloquent\Model</code> or <code>Illuminate\Database\Eloquent\Builder</code></p>
+
+<p>Example passing in a standard query builder.</p>
+
+<div class="highlight highlight-php"><pre><span class="nx">Route</span><span class="o">::</span><span class="na">post</span><span class="p">(</span><span class="s1">'datatable'</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$datatable</span> <span class="o">=</span> <span class="nx">App</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s2">"Daveawb\Datatables\Datatable"</span><span class="p">);</span>
+
+    <span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">'users'</span><span class="p">));</span>
+
+    <span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">columns</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+        <span class="s2">"first_name"</span><span class="p">,</span>
+        <span class="s2">"last_name"</span><span class="p">,</span>
+        <span class="s2">"username"</span><span class="p">,</span>
+        <span class="s2">"verified"</span><span class="p">,</span>
+        <span class="s2">"created_at"</span><span class="p">,</span>
+        <span class="s2">"updated_at"</span>
+    <span class="p">));</span>
+
+    <span class="k">return</span> <span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">result</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>As thequery method accepts builder instances you can pass a predefined query before inserting it into the datatables package.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">();</span>
+<span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">'roles'</span><span class="p">));</span>
+</pre></div>
+
+<p>Or using a standard query builder</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">table</span><span class="p">(</span><span class="s1">'users'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">'deleted_at'</span><span class="p">,</span> <span class="s1">'!='</span><span class="p">,</span> <span class="s1">'NULL'</span><span class="p">);</span>
+</pre></div>
+
+<h2>
+<a name="column-interpretation--decoration" class="anchor" href="#column-interpretation--decoration"><span class="octicon octicon-link"></span></a>Column interpretation / decoration</h2>
+
+<p>Every now and again you find that you need to merge the contents of fields or wrap them in HTML tags. This is where column interpretation / decoration comes in. Each of the decorations / interpretations are executed in the order you declare them. If you use two or more decorators on the same column, the result of the previous operation will be the value passed into the next decorator. This will allow you to build some complex decorations with a few core methods.</p>
+
+<p><strong>At present the first field declared is modified to hold the result of the combination of the two fields.</strong></p>
+
+<h3>
+<a name="built-in-methods" class="anchor" href="#built-in-methods"><span class="octicon octicon-link"></span></a>Built in methods</h3>
+
+<ul>
+<li>Append</li>
+<li>Prepend</li>
+<li>Combine</li>
+</ul><h4>
+<a name="append" class="anchor" href="#append"><span class="octicon octicon-link"></span></a>Append</h4>
+
+<p>Append takes two arguments, the value to append and an optional separator.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">columns</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="c1">// Note the space as second arg to append</span>
+    <span class="k">array</span><span class="p">(</span><span class="s2">"first_name"</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s2">"append"</span> <span class="o">=&gt;</span> <span class="s2">"eats lots of pies, "</span><span class="p">))</span>
+<span class="p">));</span>
+
+<span class="c1">// If value of first_name is David the output would be</span>
+<span class="k">array</span><span class="p">(</span>
+    <span class="c1">// Only the aaData values are shown here</span>
+    <span class="s2">"aaData"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="k">array</span><span class="p">(</span>
+            <span class="s2">"first_name"</span> <span class="o">=&gt;</span> <span class="s2">"David eats lots of pies"</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+
+<p><strong>If your data to append === a key in the data from the database, it will be swapped out for that value</strong></p>
+
+<h4>
+<a name="prepend" class="anchor" href="#prepend"><span class="octicon octicon-link"></span></a>Prepend</h4>
+
+<p>Prepend takes two arguments, the value to prepend and an optional separator.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">columns</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="c1">// Note the space as second arg to prepend</span>
+    <span class="k">array</span><span class="p">(</span><span class="s2">"last_name"</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s2">"prepend"</span> <span class="o">=&gt;</span> <span class="s2">"Mr, "</span><span class="p">))</span>
+<span class="p">));</span>
+
+<span class="c1">// If value of last_name is Barker the output would be</span>
+<span class="k">array</span><span class="p">(</span>
+    <span class="c1">// Only the aaData values are shown here</span>
+    <span class="s2">"aaData"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="k">array</span><span class="p">(</span>
+            <span class="s2">"last_name"</span> <span class="o">=&gt;</span> <span class="s2">"Mr Barker"</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+
+<p><strong>If your data to prepend === a key in the data from the database, it will be swapped out for that value</strong></p>
+
+<h4>
+<a name="combine" class="anchor" href="#combine"><span class="octicon octicon-link"></span></a>Combine</h4>
+
+<div class="highlight highlight-php"><pre><span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">columns</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="c1">// Note the space as the last arg to combine</span>
+    <span class="k">array</span><span class="p">(</span><span class="s2">"first_name"</span><span class="p">,</span> <span class="s2">"last_name"</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s2">"combine"</span> <span class="o">=&gt;</span> <span class="s2">"first_name,last_name, "</span><span class="p">))</span>
+<span class="p">));</span>
+</pre></div>
+
+<p>Instead of passing a string into the column we pass an array, with the last value always being an array that declares the decorators/interpreters you want to use with their unique settings. Each interpreter will have separate documentation in the future. For now only <code>combine</code> is available and takes in field names to combine with the last value being the seperator. If the database values returned are <code>first_name = "David"</code> and <code>last_name = "Barker"</code> the above code would produce:</p>
+
+<div class="highlight highlight-php"><pre><span class="k">array</span><span class="p">(</span>
+    <span class="c1">// Only the aaData values are shown here</span>
+    <span class="s2">"aaData"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="k">array</span><span class="p">(</span>
+            <span class="s2">"first_name"</span> <span class="o">=&gt;</span> <span class="s2">"David Barker"</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+
+<p>You can combine as many fields as you like, you are not limited to two.</p>
+
+<h4>
+<a name="chaining-interpreters--decorators" class="anchor" href="#chaining-interpreters--decorators"><span class="octicon octicon-link"></span></a>Chaining interpreters / decorators</h4>
+
+<p>You can chain as many decorators together as you like, interpreters are slightly different as they have terminal and non terminal expressions. For now all interpreters are terminal expressions and treat each call as a new interpretation.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">columns</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="k">array</span><span class="p">(</span>
+        <span class="s2">"first_name"</span><span class="p">,</span> 
+        <span class="s2">"last_name"</span><span class="p">,</span> 
+        <span class="k">array</span><span class="p">(</span>
+            <span class="s2">"combine"</span> <span class="o">=&gt;</span> <span class="s2">"first_name,last_name, "</span><span class="p">,</span>
+            <span class="s2">"append"</span> <span class="o">=&gt;</span> <span class="s2">"Mr, "</span><span class="p">,</span>
+            <span class="s2">"prepend"</span> <span class="o">=&gt;</span> <span class="s2">"BSc(hons), "</span>
+        <span class="p">)</span>
+    <span class="p">);</span>
+<span class="p">));</span>
+
+<span class="c1">// The result of the above would be</span>
+<span class="k">array</span><span class="p">(</span>
+    <span class="c1">// Only the aaData values are shown here</span>
+    <span class="s2">"aaData"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="k">array</span><span class="p">(</span>
+            <span class="s2">"first_name"</span> <span class="o">=&gt;</span> <span class="s2">"Mr David Barker BSc(hons)"</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+
+<h3>
+<a name="use-a-closure-on-your-column" class="anchor" href="#use-a-closure-on-your-column"><span class="octicon octicon-link"></span></a>Use a closure on your column!</h3>
+
+<p>To allow some fine grained control over the contents of a specific field you can use a closure instead / as well as the decorators. You must declare a closure <strong>BEFORE</strong> any decorators / interpreters. Also be aware your closure will be executed <strong>AFTER</strong> decorators / interpretaters have been run.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">columns</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="k">array</span><span class="p">(</span>
+        <span class="s2">"first_name"</span><span class="p">,</span> 
+        <span class="k">function</span><span class="p">(</span><span class="nv">$field</span><span class="p">,</span> <span class="nv">$databaseRowData</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="nb">sprintf</span><span class="p">(</span>
+                <span class="s2">"A modified first_name field, it was %s before"</span><span class="p">,</span>
+                <span class="nv">$databaseRowData</span><span class="o">-&gt;</span><span class="nv">$field</span>
+            <span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">);</span>
+<span class="p">));</span>
+
+<span class="c1">// The result of the above would be</span>
+<span class="k">array</span><span class="p">(</span>
+    <span class="s2">"aaData"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+        <span class="k">array</span><span class="p">(</span>
+            <span class="s2">"first_name"</span> <span class="o">=&gt;</span> <span class="s2">"A modified first_name field, it was David before"</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+
+<p>Please note that to date the second field is not subject to any search, ordering or any other database related functionality. This will more than likely be added in the future.</p>
+
+<h1>
+<a name="custom-database-drivers" class="anchor" href="#custom-database-drivers"><span class="octicon octicon-link"></span></a>Custom database drivers</h1>
+
+<p>The built in driver will allow you to use Eloquent models and builders as well as standard Query builders as the base query input into the package. Each driver extends <code>Daveawb\Datatables\Driver</code> that sets standard methods for all drivers such as setting the column factory and implements abstract methods.</p>
+
+<p>There are two drivers that are bundled with this package:</p>
+
+<ul>
+<li>The default Laravel driver</li>
+<li>MongoDB driver</li>
+</ul><p>Any driver can be swapped in to replace the default driver at runtime using the <code>driver</code> method.</p>
+
+<h2>
+<a name="using-the-mongodb-driver" class="anchor" href="#using-the-mongodb-driver"><span class="octicon octicon-link"></span></a>Using the MongoDB driver</h2>
+
+<div class="highlight highlight-php"><pre><span class="nv">$datatable</span> <span class="o">=</span> <span class="nx">App</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s2">"Daveawb\Datatables\Datatable"</span><span class="p">);</span>
+
+<span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">driver</span><span class="p">(</span><span class="k">new</span> <span class="nx">Daveawb\Datatables\Drivers\Mongo</span><span class="p">());</span>
+
+</pre></div>
+
+<p>Rather than using the <code>query</code> method to pass in an instance of Eloquent or a Query builder, we have a few different options for Mongo.</p>
+
+<h3>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h3>
+
+<p>If you haven't already published the packages config, now is a good time to do it. From the command line <code>php artisan config:publish daveawb/datatables</code>.</p>
+
+<p>The configuration file has settings for your MongoDB database, replica sets and multiple servers are supported as well as authorisation, just set the configuration options accordingly.</p>
+
+<h3>
+<a name="building-the-query" class="anchor" href="#building-the-query"><span class="octicon octicon-link"></span></a>Building the query</h3>
+
+<h4>
+<a name="using-a-collection" class="anchor" href="#using-a-collection"><span class="octicon octicon-link"></span></a>Using a collection</h4>
+
+<div class="highlight highlight-php"><pre><span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">);</span> <span class="c1">// Pass in a collection name</span>
+</pre></div>
+
+<h4>
+<a name="setting-predefined-query-data" class="anchor" href="#setting-predefined-query-data"><span class="octicon octicon-link"></span></a>Setting predefined query data</h4>
+
+<div class="highlight highlight-php"><pre><span class="nv">$datatable</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">'$or'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+            <span class="k">array</span><span class="p">(</span><span class="s2">"first_name"</span> <span class="o">:</span> <span class="s2">"David"</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+<p><strong>The closure must always return an array</strong></p>
+
+<h4>
+<a name="getting-results" class="anchor" href="#getting-results"><span class="octicon octicon-link"></span></a>Getting results</h4>
+
+<p>Everything else is exactly the same, set columns with interpreters / decorators any way you wish and just return <code>$datatable-&gt;result()</code> to get all your results formatted in datatables style.</p>
+
+<h2>
+<a name="building-your-own-custom-driver" class="anchor" href="#building-your-own-custom-driver"><span class="octicon octicon-link"></span></a>Building your own custom driver</h2>
+
+<p>Checkout the abstract driver class if you haven't already. Make sure that your driver implements all the methods it needs. At a later date there will be a detailed wiki entry on how to create custom database drivers with ease. For now take a look at how the two pre-packaged drivers work to get an idea how your driver needs to get data and return it.</p>
+
+<h1>
+<a name="roadmap" class="anchor" href="#roadmap"><span class="octicon octicon-link"></span></a>Roadmap</h1>
+
+<ul>
+<li>Support for dataTables 1.10.x options</li>
+<li>A query extension allowing for query manipulation after datatables has taken a count of the fields in the database</li>
+</ul><h1>
+<a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h1>
+
+<p>There are a full suite of tests written to make sure that this project works as expected. If you want to run the tests you will need to be running on a Linux OS with SQLite3 and PHPUnit. The tests are portable to mySQL however as it stands there is no support for it in the project. MongoDB is required for mongo driver tests.</p>
+
+<h1>
+<a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog</h1>
+
+<p><strong>0.3.1</strong></p>
+
+<ul>
+<li>Bug fixes to drivers specifically Laravel query builders</li>
+<li>Comprehensive module and acceptance tests added to qualify the above</li>
+<li>Drivers return raw data not formatted data</li>
+<li>Response object now holds the responsibility to format data</li>
+<li>Response tests added</li>
+</ul><p><strong>0.3.0</strong></p>
+
+<ul>
+<li>Config added, package now needs config published to set database defaults for custom drivers</li>
+<li>Interpreters updated to accept field names</li>
+<li>Database driver interface added</li>
+<li>MongoDB database driver added</li>
+</ul><p><strong>0.2.6</strong></p>
+
+<ul>
+<li>Append interpreter added</li>
+<li>Prepend interpreter added</li>
+<li>Closure capability for columns added</li>
+</ul><p><strong>0.2.0</strong></p>
+
+<ul>
+<li>Column interpreter language and decoration now included</li>
+<li>Combine interpreter added</li>
+<li>Driver interface now included for custom driver creation (work in progress)</li>
+<li>Fixed numerous bugs</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Laravel-datatables maintained by <a href="https://github.com/Daveawb">Daveawb</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
