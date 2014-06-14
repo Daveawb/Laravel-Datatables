@@ -57,7 +57,7 @@ class Response {
                 $filtered[$i][$column->mDataProp] = $data[$i][$column->fields[0]];
             }
             
-            $filtered[$i] = array_merge($filtered[$i], $this->attributes);
+            $filtered[$i] = array_merge($filtered[$i], $this->attributes($data[$i]));
         }
         
         return $filtered;
@@ -80,5 +80,20 @@ class Response {
             "iTotalDisplayRecords" => $this->driver->getDisplayRecords(),
             "sEcho" => $this->factory->input->sEcho
         );
+    }
+    
+    private function attributes($data)
+    {
+        $attributes = $this->attributes;
+        
+        foreach($attributes as &$attribute)
+        {
+            if (array_key_exists($attribute, $data))
+            {
+                $attribute = $data[$attribute];
+            }
+        }
+        
+        return $attributes;
     }
 }
