@@ -308,11 +308,9 @@ Checkout the abstract driver class if you haven't already. Make sure that your d
 - A query extension allowing for query manipulation after datatables has taken a count of the fields in the database
 
 #Testing
-========
 There are a full suite of tests written to make sure that this project works as expected. If you want to run the tests you will need to be running on a Linux OS with SQLite3 and PHPUnit. The tests are portable to mySQL however as it stands there is no support for it in the project. MongoDB is required for mongo driver tests.
 
 #Changelog
-==========
 **0.3.1**
 - Bug fixes to drivers specifically Laravel query builders
 - Comprehensive module and acceptance tests added to qualify the above
