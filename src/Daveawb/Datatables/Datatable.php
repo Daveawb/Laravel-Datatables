@@ -105,12 +105,11 @@ class Datatable {
     /**
      * Build a response object using the result data set and
      * the columns factory to configure and order results.
-     * @param {Array} of results from the driver
      * @return {Object} Illuminate\Http\JsonResponse
      */
-    private function response($results)
+    private function response()
     {
-        $response = new Response($this->factory->getColumns(), $results, $this->attributes);
+        $response = new Response($this->config, $this->driver, $this->factory, $this->attributes);
 
         return $this->json->setData($response->get());
     }
@@ -124,6 +123,6 @@ class Datatable {
     {
         $this->driver->factory($this->factory);
 
-        return $this->response($this->driver->get());
+        return $this->response();
     }
 }

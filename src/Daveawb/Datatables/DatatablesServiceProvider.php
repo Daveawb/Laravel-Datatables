@@ -9,12 +9,12 @@ class DatatablesServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = false;
+	protected $defer = true;
 
 	/**
 	 * Register the service provider.
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function register()
 	{
@@ -38,7 +38,10 @@ class DatatablesServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array();
+		return array(
+			"Daveawb\Datatables\Columns\Input\BaseInput",
+			"Daveawb\Datatables\Driver"
+		);
 	}
 
 }

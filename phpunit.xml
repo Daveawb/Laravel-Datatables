@@ -11,11 +11,17 @@
          syntaxCheck="true"
 >
     <testsuites>
+    	<testsuite name="exceptions">
+    		<directory suffix=".php">./tests/exceptions</directory>    		
+    	</testsuite>
         <testsuite name="columns">
             <directory suffix=".php">./tests/columns</directory>
         </testsuite>
         <testsuite name="drivers">
             <directory suffix=".php">./tests/drivers</directory>
+        </testsuite>
+        <testsuite name="response">
+            <directory suffix=".php">./tests/response</directory>
         </testsuite>
         <testsuite name="datatable">
             <file>./tests/datatable/FacadeTest.php</file>

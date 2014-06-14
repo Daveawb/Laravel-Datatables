@@ -1,5 +1,7 @@
-Laravel-Datatables [![Build Status](https://travis-ci.org/Daveawb/Laravel-Datatables.svg?branch=master)](https://travis-ci.org/Daveawb/Laravel-Datatables)
+Laravel-Datatables 
 ==================
+[![Build Status](https://travis-ci.org/Daveawb/Laravel-Datatables.svg?branch=master)](https://travis-ci.org/Daveawb/Laravel-Datatables) [![Coverage Status](https://coveralls.io/repos/Daveawb/Laravel-Datatables/badge.png?branch=development)](https://coveralls.io/r/Daveawb/Laravel-Datatables?branch=development)
+
 #Introduction
 This project is aimed at anyone using the fantastic dataTables jQuery plugin written by [SpryMedia](http://sprymedia.co.uk/) and Laravel 4.1 or greater. It was written originally for dataTables 1.9.x, however since 1.10.x has now been released with a new API and data structure there will be updates to allow you to make use of the new syntax in the near future. If you haven't used datatables before check it out at [Datatables.net](http://datatables.net/).
 
@@ -61,7 +63,6 @@ Add the following to your `config/app.php` alias' array.
 ````
 
 #Basic Usage
-
 ````php
 Route::post('datatable', function()
 {
@@ -306,6 +307,9 @@ Checkout the abstract driver class if you haven't already. Make sure that your d
 - Support for dataTables 1.10.x options
 - A query extension allowing for query manipulation after datatables has taken a count of the fields in the database
 
+#Testing
+There are a full suite of tests written to make sure that this project works as expected. If you want to run the tests you will need to be running on a Linux OS with SQLite3 and PHPUnit. The tests are portable to mySQL however as it stands there is no support for it in the project. MongoDB is required for mongo driver tests.
+=======
 #Changelog
 **0.3.0**
 - Config added, package now needs config published to set database defaults for custom drivers

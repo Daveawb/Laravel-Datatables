@@ -24,13 +24,18 @@ abstract class Driver {
      * @var {Array}
      */
     protected $config;
+	
+	/**
+	 * Instance of config class
+	 * @var {Object} Illuminate\Config\Repository
+	 */
+	protected $repository;
     
     /**
-     * Set the query object on the driver
-     * @param {Mixed} Query builder
+     * Inject configuration options into the driver
+     * @param {Array} of configuration options
      */
-    abstract public function query($query);
-
+    abstract public function config(array $config);
 
     /**
      * Get the results from the built query
@@ -39,16 +44,28 @@ abstract class Driver {
     abstract public function get();
     
     /**
-     * Inject configuration options into the driver
-     * @param {Array} of configuration options
-     */
-    abstract public function config(array $config);
-    
-    /**
      * Get the configuration name used for this driver
      * @return {String}
      */
     abstract protected function getConfigName();
+    
+    /**
+     * Get the total records available
+     * @return {Integer}
+     */
+    abstract public function getTotalRecords();
+    
+    /**
+     * Get the total records that are displaying
+     * @return {Integer}
+     */
+    abstract public function getDisplayRecords();
+        
+    /**
+     * Set the query object on the driver
+     * @param {Mixed} Query builder
+     */
+    abstract public function query($query);
     
     /**
      * Set the factory object on the driver
@@ -65,6 +82,8 @@ abstract class Driver {
      */
     public function setConfig(Repository $config)
     {
+    	$this->repository = $config;
+		
         $driverConfig = $this->getConfigName();
         
         $cfgArray = $driverConfig === "laravel" ?

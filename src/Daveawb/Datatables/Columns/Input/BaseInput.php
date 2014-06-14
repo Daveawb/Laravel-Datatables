@@ -106,7 +106,7 @@ abstract class BaseInput {
      * Map allowed fields to the attributes array
      *
      * @param {Array}
-     * @return void
+     * @return {Object} Self
      */
     abstract protected function mapGlobals();
 

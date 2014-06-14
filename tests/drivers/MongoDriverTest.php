@@ -30,6 +30,20 @@ class MongoDriverTest extends DatatablesTestCase {
         $this->assertEquals($this->config, $this->getProperty($this->driver, 'config'));
         $this->assertInstanceOf("stdClass", $this->getProperty($this->driver, 'db'));
     }
+	
+	/**
+	 * @expectedException MongoConnectionException
+	 * @expectedExceptionMessage Authentication failed on database 'database' with username 'thisShouldNeverBeAUserName'
+	 */
+	public function testConfigOptionsAreAppliedToOptions()
+	{
+		$this->config['username'] = "thisShouldNeverBeAUserName";
+		$this->config['password'] = "password";
+		
+		$driver = new Daveawb\Datatables\Drivers\Mongo;
+		
+		$mongoClient = $driver->config($this->config);
+	}
     
     public function testCollectionAppliesCollectionToDbObject()
     {
@@ -106,9 +120,8 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertTrue(is_array($result["aaData"]));
-        $this->assertEquals(4, $result['iTotalRecords']);
-        $this->assertEquals(4, $result['iTotalDisplayRecords']);
+        $this->assertTrue(is_array($result));
+        $this->assertTrue(is_array($result[0]));
     }
     
     public function testDriverFiltersDataUsingSearch()
@@ -137,10 +150,10 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertEquals(4, $result['iTotalRecords']);
-        $this->assertEquals(1, $result['iTotalDisplayRecords']);
+        $this->assertEquals(4, $driver->getTotalRecords());
+        $this->assertEquals(1, $driver->getDisplayRecords());
         
-        foreach($result['aaData'] as $value)
+        foreach($result as $value)
         {
             $this->assertEquals("David", $value['first_name']);
             $this->assertEquals("Barker", $value['last_name']);
@@ -173,11 +186,11 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertEquals(4, $result['iTotalRecords']);
-        $this->assertEquals(4, $result['iTotalDisplayRecords']);
+        $this->assertEquals(4, $driver->getTotalRecords());
+        $this->assertEquals(4, $driver->getDisplayRecords());
         
-        $value = $result['aaData'][0];
-        //dd($value);
+        $value = $result[0];
+		
         $this->assertEquals("David", $value['first_name']);
         $this->assertEquals("Barker", $value['last_name']);
     }
@@ -208,10 +221,10 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertEquals(4, $result['iTotalRecords']);
-        $this->assertEquals(4, $result['iTotalDisplayRecords']);
+        $this->assertEquals(4, $driver->getTotalRecords());
+        $this->assertEquals(4, $driver->getDisplayRecords());
         
-        $value = $result['aaData'][0];
+        $value = $result[0];
         
         $this->assertEquals("Simon", $value['first_name']);
         $this->assertEquals("Holloway", $value['last_name']);
@@ -247,10 +260,10 @@ class MongoDriverTest extends DatatablesTestCase {
         
         $result = $driver->get();
         
-        $this->assertEquals(3, $result['iTotalRecords']);
-        $this->assertEquals(3, $result['iTotalDisplayRecords']);
+        $this->assertEquals(3, $driver->getTotalRecords());
+        $this->assertEquals(3, $driver->getDisplayRecords());
         
-        $value = $result['aaData'][0];
+        $value = $result[0];
         
         $this->assertEquals("Simon", $value['first_name']);
         $this->assertEquals("Holloway", $value['last_name']);
