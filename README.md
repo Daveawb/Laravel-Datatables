@@ -37,7 +37,7 @@ Add the following to your composer.json file
 ````json
 {
     "require": {
-        "daveawb/datatables": "0.3.0"
+        "daveawb/datatables": "0.3.*"
     },
 }
 ````
@@ -311,6 +311,13 @@ Checkout the abstract driver class if you haven't already. Make sure that your d
 There are a full suite of tests written to make sure that this project works as expected. If you want to run the tests you will need to be running on a Linux OS with SQLite3 and PHPUnit. The tests are portable to mySQL however as it stands there is no support for it in the project. MongoDB is required for mongo driver tests.
 =======
 #Changelog
+**0.3.1**
+- Bug fixes to drivers specifically Laravel query builders
+- Comprehensive module and acceptance tests added to qualify the above
+- Drivers return raw data not formatted data
+- Response object now holds the responsibility to format data
+- Response tests added
+
 **0.3.0**
 - Config added, package now needs config published to set database defaults for custom drivers
 - Interpreters updated to accept field names
