@@ -16,23 +16,6 @@ class ExceptionsTest extends DatatablesTestCase {
 		));
 		
 		$exception = new Daveawb\Datatables\ValidationException($validator);
-	}
-	
-	public function testValidationExceptionRetrievesValidator()
-	{
-		$validator = $this->app['validator']->make(array(
-			"testRequired" => "required",
-			"testInteger" => 1
-		), array(
-			"testRequired" => "required",
-			"testInteger" => "required|integer"
-		), array(
-			"testRequired" => "Field required",
-			"testInteger" => "Field is integer"
-		));
-		
-		$exception = new Daveawb\Datatables\ValidationException($validator);
-		
 		$this->assertInstanceOf("Illuminate\Validation\Validator", $exception->getValidator());
 	}
 	
