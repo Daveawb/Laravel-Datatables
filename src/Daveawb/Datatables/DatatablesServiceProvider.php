@@ -14,7 +14,7 @@ class DatatablesServiceProvider extends ServiceProvider {
 	/**
 	 * Register the service provider.
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function register()
 	{
