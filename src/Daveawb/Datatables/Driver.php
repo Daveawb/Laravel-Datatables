@@ -24,6 +24,12 @@ abstract class Driver {
      * @var {Array}
      */
     protected $config;
+	
+	/**
+	 * Instance of config class
+	 * @var {Object} Illuminate\Config\Repository
+	 */
+	protected $repository;
     
     /**
      * Inject configuration options into the driver
@@ -76,6 +82,8 @@ abstract class Driver {
      */
     public function setConfig(Repository $config)
     {
+    	$this->repository = $config;
+		
         $driverConfig = $this->getConfigName();
         
         $cfgArray = $driverConfig === "laravel" ?

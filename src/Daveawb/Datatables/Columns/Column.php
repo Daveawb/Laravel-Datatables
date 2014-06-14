@@ -80,7 +80,7 @@ class Column {
      * @return {String}
      */ 
     public function interpret($field, &$data)
-    {
+    {		
         if (count($this->interpret) < 1 && is_null($this->closure))
             return $data[$field];
             
