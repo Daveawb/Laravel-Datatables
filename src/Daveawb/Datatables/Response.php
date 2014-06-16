@@ -87,6 +87,7 @@ class Response
         $attributes = $this->attributes;
 
         foreach ($attributes as &$attribute)
+
         {
             if (array_key_exists($attribute, $data))
             {
