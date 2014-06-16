@@ -30,6 +30,20 @@ class MongoDriverTest extends DatatablesTestCase {
         $this->assertEquals($this->config, $this->getProperty($this->driver, 'config'));
         $this->assertInstanceOf("stdClass", $this->getProperty($this->driver, 'db'));
     }
+	
+	/**
+	 * @expectedException MongoConnectionException
+	 * @expectedExceptionMessage Authentication failed on database 'database' with username 'thisShouldNeverBeAUserName'
+	 */
+	public function testConfigOptionsAreAppliedToOptions()
+	{
+		$this->config['username'] = "thisShouldNeverBeAUserName";
+		$this->config['password'] = "password";
+		
+		$driver = new Daveawb\Datatables\Drivers\Mongo;
+		
+		$mongoClient = $driver->config($this->config);
+	}
     
     public function testCollectionAppliesCollectionToDbObject()
     {
@@ -176,7 +190,7 @@ class MongoDriverTest extends DatatablesTestCase {
         $this->assertEquals(4, $driver->getDisplayRecords());
         
         $value = $result[0];
-        //dd($value);
+		
         $this->assertEquals("David", $value['first_name']);
         $this->assertEquals("Barker", $value['last_name']);
     }

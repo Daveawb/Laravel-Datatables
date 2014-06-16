@@ -81,4 +81,24 @@ class AppendTest extends DatatablesTestCase {
         
         $this->assertEquals("David Barker", $result);
 	}
+	
+	public function testPlainEvaluationDoesNotIncludeField()
+	{
+		$data = array(
+            "first_name" => "David",
+            "last_name" => "Barker",
+            "username" => "daveawb",
+            "title" => "Mr"
+        );
+        
+        $append = new Daveawb\Datatables\Columns\Expressions\Append(array(
+            "first_name",
+        ), $data);
+        
+        $result = $append->plain(array(
+            "last_name"," "
+        ));
+        
+        $this->assertEquals(" Barker", $result);
+	}
 }

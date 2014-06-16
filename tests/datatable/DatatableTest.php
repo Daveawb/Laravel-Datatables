@@ -96,15 +96,7 @@ class DatatableTest extends DatatablesTestCase {
      */
     public function testSettingLessColumnsThanExceptedThrowsException()
     {
-        $datatable = new Daveawb\Datatables\Datatable(
-        	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-        		$this->app['validator']
-			),
-			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse,
-			$this->app['config']
-		);
+        $datatable = $this->getDatatable();
 		
         $datatable->columns(array(
             "id"
@@ -116,15 +108,7 @@ class DatatableTest extends DatatablesTestCase {
      */
     public function testSettingMoreColumnsThanExceptedThrowsException()
     {
-        $datatable = new Daveawb\Datatables\Datatable(
-        	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-        		$this->app['validator']
-			),
-			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse,
-            $this->app['config']
-		);
+        $datatable = $this->getDatatable();
 		
         $datatable->columns(array(
             "id",
@@ -135,15 +119,7 @@ class DatatableTest extends DatatablesTestCase {
 	
 	public function testResultReturnsAJsonResponseObject()
 	{
-		$datatable = new Daveawb\Datatables\Datatable(
-        	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-        		$this->app['validator']
-			),
-			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse,
-            $this->app['config']
-		);
+		$datatable = $this->getDatatable();
 		
 		$datatable->query(new UserModel());
 		
@@ -152,21 +128,13 @@ class DatatableTest extends DatatablesTestCase {
 		));
 		
 		$result = $datatable->result();
-		
+
 		$this->assertInstanceOf("Illuminate\Http\JsonResponse", $result);
 	}
 	
 	public function testSettingMultipleFieldsPerColumn()
 	{
-		$datatable = new Daveawb\Datatables\Datatable(
-        	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-        		$this->app['validator']
-			),
-			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse,
-            $this->app['config']
-		);
+		$datatable = $this->getDatatable();
 		
 		$datatable->query(new UserModel());
 		
@@ -200,17 +168,36 @@ class DatatableTest extends DatatablesTestCase {
 		
 		$this->app['request']->replace($testData);
 		
-		$datatable = new Daveawb\Datatables\Datatable(
-        	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-        		$this->app['validator']
-			),
-			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse,
-            $this->app['config']
-		);
+		$datatable = $this->getDatatable();
 		
 		$datatable->query(new UserModel());
+		
+		$datatable->columns(array(
+			"first_name",
+			"last_name"
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		$this->assertEquals("Barry", $data->aaData[0][0]);
+	}
+	
+	public function testResultsAreSortedAscendinUsingQueryBuilder()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => true,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "asc"
+		));
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = $this->getDatatable();
+		
+		$datatable->query(DB::table('users'));
 		
 		$datatable->columns(array(
 			"first_name",
@@ -235,15 +222,7 @@ class DatatableTest extends DatatablesTestCase {
 		
 		$this->app['request']->replace($testData);
 		
-		$datatable = new Daveawb\Datatables\Datatable(
-        	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-        		$this->app['validator']
-			),
-			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse,
-            $this->app['config']
-		);
+		$datatable = $this->getDatatable();
 		
 		$datatable->query(new UserModel());
 		
@@ -259,6 +238,185 @@ class DatatableTest extends DatatablesTestCase {
 		$this->assertEquals("Englebert", $data->aaData[0][0]);
 	}
 	
+	public function testResultsAreSortedDescendingUsingQueryBuilder()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => true,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "desc"
+		));
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = $this->getDatatable();
+		
+		$datatable->query(DB::table('users'));
+		
+		$datatable->columns(array(
+			"first_name",
+			"last_name"
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		$this->assertEquals("Englebert", $data->aaData[0][0]);
+	}
+	
+	public function testMultipleFieldsAreSortedAscending()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => false,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "asc"
+		));
+		
+		$expected = array(
+			"Barry Evans",
+			"Barry Manilow",
+			"Barry Scott",
+			"Barry White",
+			"Barry Williams"
+		);
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = $this->getDatatable();
+		
+		$datatable->query(with(new UserModel())->where('first_name', '=', 'Barry'));
+		
+		$datatable->columns(array(
+			array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
+			array("id")
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		for ($i = 0; $i < count($data->aaData); $i++)
+		{
+			$this->assertEquals($expected[$i], $data->aaData[$i][0]);
+		}
+	}
+	
+	public function testMultipleFieldsAreSortedAscendingUsingQueryBuilder()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => false,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "asc"
+		));
+		
+		$expected = array(
+			"Barry Evans",
+			"Barry Manilow",
+			"Barry Scott",
+			"Barry White",
+			"Barry Williams"
+		);
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = $this->getDatatable();
+		
+		$datatable->query(DB::table('users')->where('first_name', '=', 'Barry'));
+		
+		$datatable->columns(array(
+			array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
+			array("id")
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		for ($i = 0; $i < count($data->aaData); $i++)
+		{
+			$this->assertEquals($expected[$i], $data->aaData[$i][0]);
+		}
+	}
+	
+	public function testMultipleFieldsAreSortedDescending()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => false,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "desc"
+		));
+		
+		$expected = array(
+			"Barry Evans",
+			"Barry Manilow",
+			"Barry Scott",
+			"Barry White",
+			"Barry Williams"
+		);
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = $this->getDatatable();
+		
+		$datatable->query(with(new UserModel())->where('first_name', '=', 'Barry'));
+		
+		$datatable->columns(array(
+			array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
+			array("id")
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		for ($i = 0; $i < count($data->aaData); $i++)
+		{
+			$this->assertEquals($expected[4 - $i], $data->aaData[$i][0]);
+		}
+	}
+	
+	public function testMultipleFieldsAreSortedDescendingUsingQueryBuilder()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSortable_0" => true,
+			"bSortable_1" => false,
+			"iSortCol_0" => 0,
+			"sSortDir_0" => "desc"
+		));
+		
+		$expected = array(
+			"Barry Evans",
+			"Barry Manilow",
+			"Barry Scott",
+			"Barry White",
+			"Barry Williams"
+		);
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = $this->getDatatable();
+		
+		$datatable->query(DB::table('users')->where('first_name', '=', 'Barry'));
+		
+		$datatable->columns(array(
+			array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
+			array("id")
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		for ($i = 0; $i < count($data->aaData); $i++)
+		{
+			$this->assertEquals($expected[4 - $i], $data->aaData[$i][0]);
+		}
+	}
+
 	public function testSearchReturnsOnlyResultsWithSearchString()
 	{
 		$testData = array_merge($this->testData, array(
@@ -269,17 +427,35 @@ class DatatableTest extends DatatablesTestCase {
 		
 		$this->app['request']->replace($testData);
 		
-		$datatable = new Daveawb\Datatables\Datatable(
-        	new Daveawb\Datatables\Columns\Factory(
-        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-        		$this->app['validator']
-			),
-			new Daveawb\Datatables\Drivers\Laravel,
-			new Illuminate\Http\JsonResponse,
-            $this->app['config']
-		);
+		$datatable = $this->getDatatable();
 		
 		$datatable->query(new UserModel());
+		
+		$datatable->columns(array(
+			"first_name",
+			"last_name"
+		));
+		
+		$result = $datatable->result();
+		
+		$data = json_decode($result->getContent());
+		
+		$this->assertCount(5, $data->aaData);
+	}
+	
+	public function testSearchReturnsOnlyResultsWithSearchStringUsingQueryBuilder()
+	{
+		$testData = array_merge($this->testData, array(
+			"bSearchable_0" => true,
+			"bSearchable_1" => false,
+			"sSearch" => "Barry"
+		));
+		
+		$this->app['request']->replace($testData);
+		
+		$datatable = $this->getDatatable();
+		
+		$datatable->query(DB::table('users'));
 		
 		$datatable->columns(array(
 			"first_name",
@@ -295,15 +471,7 @@ class DatatableTest extends DatatablesTestCase {
     
     public function testCombineInterpreterReturnsCorrectData()
     {
-        $datatable = new Daveawb\Datatables\Datatable(
-            new Daveawb\Datatables\Columns\Factory(
-                new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-                $this->app['validator']
-            ),
-            new Daveawb\Datatables\Drivers\Laravel,
-            new Illuminate\Http\JsonResponse,
-            $this->app['config']
-        );
+        $datatable = $this->getDatatable();
         
         $datatable->query(new UserModel());
         
@@ -321,15 +489,7 @@ class DatatableTest extends DatatablesTestCase {
     
     public function testAppendInterpreterReturnsCorrectData()
     {
-        $datatable = new Daveawb\Datatables\Datatable(
-            new Daveawb\Datatables\Columns\Factory(
-                new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-                $this->app['validator']
-            ),
-            new Daveawb\Datatables\Drivers\Laravel,
-            new Illuminate\Http\JsonResponse,
-            $this->app['config']
-        );
+        $datatable = $this->getDatatable();
         
         $datatable->query(new UserModel());
         
@@ -347,15 +507,7 @@ class DatatableTest extends DatatablesTestCase {
     
     public function testMultipleInterpretersReturnCorrectData()
     {
-        $datatable = new Daveawb\Datatables\Datatable(
-            new Daveawb\Datatables\Columns\Factory(
-                new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-                $this->app['validator']
-            ),
-            new Daveawb\Datatables\Drivers\Laravel,
-            new Illuminate\Http\JsonResponse,
-            $this->app['config']
-        );
+        $datatable = $this->getDatatable();
         
         $datatable->query(new UserModel());
         
@@ -370,4 +522,17 @@ class DatatableTest extends DatatablesTestCase {
         
         $this->assertEquals($data->aaData[0][0], "Mr Barry% Evans");
     }
+	
+	private function getDatatable()
+	{
+		return new Daveawb\Datatables\Datatable(
+        	new Daveawb\Datatables\Columns\Factory(
+        		new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+        		$this->app['validator']
+			),
+			new Daveawb\Datatables\Drivers\Laravel,
+			new Illuminate\Http\JsonResponse,
+            $this->app['config']
+		);
+	}
 }

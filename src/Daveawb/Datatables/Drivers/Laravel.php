@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as Fluent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Contracts\ArrayableInterface;
 
 use ErrorException;
 
@@ -100,7 +101,11 @@ class Laravel extends Driver {
      */
     public function get()
     {
-        return $this->build()->get()->toArray();
+        $data = $this->build()->get();
+        
+        return $data instanceof ArrayableInterface ? 
+        	$data->toArray() : 
+			json_decode(json_encode($data), true);
     }
     
     /**
