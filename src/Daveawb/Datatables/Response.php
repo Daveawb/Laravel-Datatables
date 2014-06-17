@@ -1,44 +1,46 @@
-<?php namespace Daveawb\Datatables;
+<?php
+namespace Daveawb\Datatables;
 
 use Daveawb\Datatables\Columns\Factory;
 use Daveawb\Datatables\Driver;
 
 use Illuminate\Config\Repository;
 
-class Response {
-    
+class Response
+{
+
     /**
      * Configuration object
      * @var {Object} Illuminate\Config\Repository
      */
     protected $config;
-    
+
     /**
      * Query driver
      * @var {Object} Daveawb\Datatables\Driver
      */
     protected $driver;
-    
+
     /**
      * Column factory
      * @var {Object} Daveawb\Datatables\Columns\Factory
      */
     protected $factory;
-    
+
     /**
      * Row attributes
      * @var {Array}
      */
     protected $attributes;
-    
+
     public function __construct(Repository $config, Driver $driver, Factory $factory, array $attributes)
     {
         $this->config = $config;
         $this->driver = $driver;
         $this->factory = $factory;
-        $this->attributes= $attributes;
+        $this->attributes = $attributes;
     }
-    
+
     /**
      * Filter the results and organise them by column order. This is the point
      * that column fields are interpreted and applied to the results field.
@@ -48,30 +50,28 @@ class Response {
     {
         $filtered = array();
         
+        $modified = $data;
+        
         for ($i = 0; $i < count($data); $i++)
         {
-            foreach($this->factory->getColumns() as $key => $column)
+            foreach ($this->factory->getColumns() as $key => $column)
             {
-                $column->interpret($column->fields[0], $data[$i]);
-                
-                $filtered[$i][$column->mDataProp] = $data[$i][$column->fields[0]];
+                $column->interpret($column->fields[0], $modified[$i]);
+
+                $filtered[$i][$column->mDataProp] = $modified[$i][$column->fields[0]];
             }
-            
+
             $filtered[$i] = array_merge($filtered[$i], $this->attributes($data[$i]));
         }
-        
+
         return $filtered;
     }
-    
+
     public function get()
     {
-        return $this->formattedResponse(
-            $this->filter(
-                $this->driver->get()
-            )
-        );    
+        return $this->formattedResponse($this->filter($this->driver->get()));
     }
-    
+
     protected function formattedResponse($data)
     {
         return array(
@@ -81,19 +81,20 @@ class Response {
             "sEcho" => $this->factory->input->sEcho
         );
     }
-    
+
     private function attributes($data)
     {
         $attributes = $this->attributes;
-        
-        foreach($attributes as &$attribute)
+
+        foreach ($attributes as &$attribute)
+
         {
             if (array_key_exists($attribute, $data))
             {
                 $attribute = $data[$attribute];
             }
         }
-        
+
         return $attributes;
     }
 }

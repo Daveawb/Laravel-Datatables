@@ -1,5 +1,6 @@
 Laravel-Datatables 
 ==================
+
 [![Build Status](https://travis-ci.org/Daveawb/Laravel-Datatables.svg?branch=master)](https://travis-ci.org/Daveawb/Laravel-Datatables) [![Coverage Status](https://coveralls.io/repos/Daveawb/Laravel-Datatables/badge.png?branch=development)](https://coveralls.io/r/Daveawb/Laravel-Datatables?branch=development)
 
 #Introduction
