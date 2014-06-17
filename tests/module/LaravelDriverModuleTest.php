@@ -441,6 +441,48 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
         }
     }
     
+	public function testTableJoinsAllowSearchingByJoinedValues()
+    {
+        $testData = array_merge($this->testData, array(
+            "bSearchable_1" => true,
+            "sSearch" => "admi"
+        ));
+        
+        $this->app['request']->replace($testData);
+        
+        $datatable = $this->getDatatable();
+        
+        $datatable->query(DB::table('users')
+            ->select(DB::raw('users.*, group_concat(roles.role) as role'))
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->groupBy('users.id')
+        );
+            
+        $datatable->columns(array(
+            "first_name",
+            "role"
+        ));
+        
+        $result = $datatable->result();
+		
+		//dd($this->getProperty($this->getProperty($datatable, "driver"), "builders")[1]->toSql());
+        
+        $data = json_decode($result->getContent());
+        
+        $this->assertCount(2, $data->aaData);
+        $this->assertEquals(6, $data->iTotalRecords);
+        $this->assertEquals(2, $data->iTotalDisplayRecords);
+        
+        foreach($data->aaData as $key => $data) 
+        {
+            if ($key >= 4)
+                $this->assertTrue($data[1] === "admin,user");
+            else
+                $this->assertTrue($data[1] === 'user');
+        }
+    }
+
     private function getDatatable()
     {
         return new Daveawb\Datatables\Datatable(

@@ -136,19 +136,32 @@ class Laravel extends Driver {
      */
     protected function getCount($index = 0)
     {
-        $query = $this->builders[0];
+        $query = $this->builders[$index];
         
         if ($query->joins)
         {
-            $query = $query->from(new Expression(sprintf('(select count(*) aggregate from %s),%s', $this->table, $this->table)))
+        	$subQuery = $query->newQuery()
+				->from($this->table)
+        		->select(new Expression('count(*) aggregate'));
+				
+			$subQuery->mergeWheres($query->wheres, $query->getRawBindings()['where']);
+				
+            $query = $query->from(new Expression(sprintf('(%s),%s', $subQuery->toSql(), $this->table)))
                            ->addSelect('aggregate');
+			
+			$query->mergeBindings($subQuery);
         }
         else
         {
             $query = $query->addSelect(new Expression('count(*) as aggregate'));
         }
 
-        return (int)$query->first()->aggregate;
+        $result = $query->first();
+        
+		if ( ! $result )
+			dd($index, $result, $subQuery->toSql(), $subQuery->getRawBindings());
+		
+		return (int)$result->aggregate;
     }
     
     
