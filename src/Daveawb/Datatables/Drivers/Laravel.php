@@ -78,7 +78,10 @@ class Laravel extends Driver {
 
         if ($query instanceof Builder)
             $query = $query->getQuery();
-
+        
+        if ( ! isset($this->table) )
+            $this->table = $query->from;
+        
         $this->builders[] = clone($query);
     }
     
@@ -134,8 +137,16 @@ class Laravel extends Driver {
     protected function getCount($index = 0)
     {
         $query = $this->builders[0];
-
-        $query = $query->addSelect(new Expression('count(*) as aggregate'));
+        
+        if ($query->joins)
+        {
+            $query = $query->from(new Expression(sprintf('(select count(*) aggregate from %s),%s', $this->table, $this->table)))
+                           ->addSelect('aggregate');
+        }
+        else
+        {
+            $query = $query->addSelect(new Expression('count(*) as aggregate'));
+        }
 
         return (int)$query->first()->aggregate;
     }
@@ -161,7 +172,7 @@ class Laravel extends Driver {
                 )
             );
         }
-
+        
         $this->query = $query;
 
         $this->cacheQuery();

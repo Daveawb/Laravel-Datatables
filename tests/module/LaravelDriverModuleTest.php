@@ -324,6 +324,123 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
         $this->assertCount(5, $data->aaData);
     }
     
+    public function testTableJoinsReturnCorrectData()
+    {
+        $this->app['request']->replace($this->testData);
+        
+        $datatable = $this->getDatatable();
+        
+        $datatable->query(DB::table('users')
+            ->select(DB::raw('users.*, group_concat(roles.role) as role'))
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->groupBy('users.id')
+        );
+            
+        $datatable->columns(array(
+            "first_name",
+            "role"
+        ));
+        
+        $result = $datatable->result();
+        
+        $data = json_decode($result->getContent());
+        
+        $this->assertCount(6, $data->aaData);
+        $this->assertEquals(6, $data->iTotalRecords);
+        $this->assertEquals(6, $data->iTotalDisplayRecords);
+        
+        foreach($data->aaData as $data) 
+        {
+            $this->assertTrue($data[1] === "admin" || $data[1] === 'user' || $data[1] === 'admin,user');
+        }
+    }
+    
+    
+    public function testTableJoinsAllowSortingByJoinedValuesAscending()
+    {
+        $testData = array_merge($this->testData, array(
+            "bSortable_0" => false,
+            "bSortable_1" => true,
+            "iSortCol_0" => 1,
+            "sSortDir_0" => "asc"
+        ));
+        
+        $this->app['request']->replace($testData);
+        
+        $datatable = $this->getDatatable();
+        
+        $datatable->query(DB::table('users')
+            ->select(DB::raw('users.*, group_concat(roles.role) as role'))
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->groupBy('users.id')
+        );
+            
+        $datatable->columns(array(
+            "first_name",
+            "role"
+        ));
+        
+        $result = $datatable->result();
+        
+        $data = json_decode($result->getContent());
+        
+        $this->assertCount(6, $data->aaData);
+        $this->assertEquals(6, $data->iTotalRecords);
+        $this->assertEquals(6, $data->iTotalDisplayRecords);
+        
+        foreach($data->aaData as $key => $data) 
+        {
+            if ($key <= 1)
+                $this->assertTrue($data[1] === "admin,user");
+            else
+                $this->assertTrue($data[1] === 'user');
+        }
+    }
+
+    public function testTableJoinsAllowSortingByJoinedValuesDescending()
+    {
+        $testData = array_merge($this->testData, array(
+            "bSortable_0" => false,
+            "bSortable_1" => true,
+            "iSortCol_0" => 1,
+            "sSortDir_0" => "desc"
+        ));
+        
+        $this->app['request']->replace($testData);
+        
+        $datatable = $this->getDatatable();
+        
+        $datatable->query(DB::table('users')
+            ->select(DB::raw('users.*, group_concat(roles.role) as role'))
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->groupBy('users.id')
+        );
+            
+        $datatable->columns(array(
+            "first_name",
+            "role"
+        ));
+        
+        $result = $datatable->result();
+        
+        $data = json_decode($result->getContent());
+        
+        $this->assertCount(6, $data->aaData);
+        $this->assertEquals(6, $data->iTotalRecords);
+        $this->assertEquals(6, $data->iTotalDisplayRecords);
+        
+        foreach($data->aaData as $key => $data) 
+        {
+            if ($key >= 4)
+                $this->assertTrue($data[1] === "admin,user");
+            else
+                $this->assertTrue($data[1] === 'user');
+        }
+    }
+    
     private function getDatatable()
     {
         return new Daveawb\Datatables\Datatable(

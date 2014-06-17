@@ -82,6 +82,18 @@ class DatatablesRolesTables extends Migration {
                 "created_at" => date("Y-m-d H:i:s"),
                 "updated_at" => date("Y-m-d H:i:s")
             ),
+            array(
+                "user_id" => 1,
+                "role_id" => 2,
+                "created_at" => date("Y-m-d H:i:s"),
+                "updated_at" => date("Y-m-d H:i:s")
+            ),
+            array(
+                "user_id" => 2,
+                "role_id" => 2,
+                "created_at" => date("Y-m-d H:i:s"),
+                "updated_at" => date("Y-m-d H:i:s")
+            ),
         ));
 	}
 
