@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -11,6 +11,9 @@
          syntaxCheck="true"
 >
     <testsuites>
+        <testsuite name="all">
+            <directory suffix=".php">./tests</directory>         
+        </testsuite>
     	<testsuite name="exceptions">
     		<directory suffix=".php">./tests/exceptions</directory>    		
     	</testsuite>
@@ -26,6 +29,9 @@
         <testsuite name="datatable">
             <file>./tests/datatable/FacadeTest.php</file>
             <file>./tests/datatable/DatatableTest.php</file>
+        </testsuite>
+        <testsuite name="moduletests">
+            <directory suffix=".php">./tests/module</directory>
         </testsuite>
     </testsuites>
 </phpunit>
