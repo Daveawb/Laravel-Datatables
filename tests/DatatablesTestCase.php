@@ -98,7 +98,6 @@ class DatatablesTestCase extends Orchestra\Testbench\TestCase {
     
     public function runMigrations()
     {
-        echo "running migrations";
         // Allow us to call artisan commands
         $artisan = $this->app->make('artisan');
         

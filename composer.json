@@ -1,7 +1,7 @@
 {
     "name": "daveawb/datatables",
     "description": "",
-    "version" : "0.3.0",
+    "version" : "0.3.2",
     "authors": [
         {
             "name": "David Barker",
@@ -10,7 +10,9 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.1.*"
+        "illuminate/support": "4.1.*",
+        "illuminate/container": "4.1.*",
+        "illuminate/database": "4.1.*"
     },
     "require-dev": {
     	"doctrine/dbal": "dev-master",
@@ -20,9 +22,7 @@
     },
     "autoload": {
 	    "classmap" : [
-	    	"src/Daveawb/Datatables/exceptions.php",
-	    	"tests/DatatablesTestCase.php",
-	    	"tests/laravel"
+	    	"src/Daveawb/Datatables/exceptions.php"
 	    ],
         "psr-0": {
             "Daveawb\\Datatables": "src/"
