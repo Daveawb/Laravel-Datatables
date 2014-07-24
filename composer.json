@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.1.*"
+        "illuminate/support": "4.2.*"
     },
     "require-dev": {
     	"doctrine/dbal": "dev-master",
@@ -19,11 +19,11 @@
         "mockery/mockery": "dev-master"
     },
     "autoload": {
-	    "classmap" : [
-	    	"src/Daveawb/Datatables/exceptions.php",
-	    	"tests/DatatablesTestCase.php",
-	    	"tests/laravel"
-	    ],
+	"classmap" : [
+	    "src/Daveawb/Datatables/exceptions.php",
+	    "tests/DatatablesTestCase.php",
+	    "tests/laravel"
+	],
         "psr-0": {
             "Daveawb\\Datatables": "src/"
         }
