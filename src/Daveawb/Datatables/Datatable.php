@@ -4,13 +4,9 @@ namespace Daveawb\Datatables;
 use Daveawb\Datatables\Columns\Factory;
 
 use Illuminate\Config\Repository;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Builder as FluentBuilder;
 use Illuminate\Http\JsonResponse;
 
-use ErrorException;
-
+/** @noinspection PhpInconsistentReturnPointsInspection */
 class Datatable {
 
     /**
@@ -33,8 +29,10 @@ class Datatable {
 
     /**
      * Construct and get all the Input
-     * @param {Object} Daveawb\Datatables\Support\Input
-     * @return void
+     * @param Factory $factory
+     * @param Driver $driver
+     * @param JsonResponse $json
+     * @param Repository $config
      */
     public function __construct(Factory $factory, Driver $driver, JsonResponse $json, Repository $config)
     {
@@ -66,7 +64,8 @@ class Datatable {
 
     /**
      * Set the columnar data required to build output
-     * @param {Array} columnar data
+     * @param array $columns
+     * @throws ValidationException
      */
     public function columns(array $columns)
     {
@@ -77,11 +76,11 @@ class Datatable {
             $this->factory->create($column, $key);
         }
     }
-    
+
     /**
      * Set a different driver to use instead of
      * current default loaded driver
-     * @param {Object} Daveawb\Datatables\Driver
+     * @param Driver $driver
      */
     public function driver(Driver $driver)
     {
@@ -103,26 +102,26 @@ class Datatable {
     }
 
     /**
-     * Build a response object using the result data set and
-     * the columns factory to configure and order results.
-     * @return {Object} Illuminate\Http\JsonResponse
-     */
-    private function response()
-    {
-        $response = new Response($this->config, $this->driver, $this->factory, $this->attributes);
-
-        return $this->json->setData($response->get());
-    }
-    
-    /**
      * Gather results using the default driver or a specified
      * driver that has been injected.
-     * @return {Object} Illuminate\Http\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function result()
     {
         $this->driver->factory($this->factory);
 
         return $this->response();
+    }
+
+    /**
+     * Build a response object using the result data set and
+     * the columns factory to configure and order results.
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    private function response()
+    {
+        $response = new Response($this->config, $this->driver, $this->factory, $this->attributes);
+
+        return $this->json->setData($response->get());
     }
 }

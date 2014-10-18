@@ -32,12 +32,12 @@ class Column {
      * @var {Object} Closure
      */
     protected $closure;
-    
+
     /**
      * Build the column with data passed in by
      * the factory
-     * @param {String} name
-     * @param {Array} data from input
+     * @param string
+     * @param array $settings
      */
     public function __construct($fields, array $settings)
     {
@@ -57,32 +57,45 @@ class Column {
         // Set fields and attributes
         $this->fields = $fields;
         $this->attributes = $settings;
+
+        $this->checkColumn($fields);
     }
     
     /**
      * Set interpretation data on this column
-     * @param {Array} array of interpretation data
+     * @param array
      */
     protected function setInterpretationData($data)
     {
-        array_walk($data, function(&$values, $func)
+        array_walk($data, function (&$values)
         {
             $values = explode(',', $values);
         });
         
         $this->interpret = array_merge($this->interpret, $data);
     }
-    
+
+    protected function checkColumn($columns)
+    {
+        foreach ($columns as $column)
+        {
+            if (strstr($column, '.'))
+            {
+                $this->sort = false;
+            }
+        }
+    }
+
     /**
      * Run data through this columns interpreters
      * and return the modified results
-     * @param {Array} database data
-     * @return {String}
-     */ 
+     * @param $field
+     * @param $data
+     */
     public function interpret($field, &$data)
     {		
         if (count($this->interpret) < 1 && is_null($this->closure))
-            return $data[$field];
+            return array_get($data, $field);
             
         foreach($this->interpret as $class => $args)
 		{
