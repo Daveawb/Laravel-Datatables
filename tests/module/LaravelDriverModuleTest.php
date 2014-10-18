@@ -38,8 +38,21 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
         
         $this->assertEquals("Barry", $data->aaData[0][0]);
     }
-    
-    public function testResultsAreSortedAscendinUsingQueryBuilder()
+
+    private function getDatatable()
+    {
+        return new Daveawb\Datatables\Datatable(
+            new Daveawb\Datatables\Columns\Factory(
+                new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
+                $this->app['validator']
+            ),
+            new Daveawb\Datatables\Drivers\Laravel,
+            new Illuminate\Http\JsonResponse,
+            $this->app['config']
+        );
+    }
+
+    public function testResultsAreSortedAscendingUsingQueryBuilder()
     {
         $testData = array_merge($this->testData, array(
             "bSortable_0" => true,
@@ -47,20 +60,20 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "iSortCol_0" => 0,
             "sSortDir_0" => "asc"
         ));
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(DB::table('users'));
-        
+
         $datatable->columns(array(
             "first_name",
             "last_name"
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
 
         $this->assertEquals("Barry", $data->aaData[0][0]);
@@ -74,22 +87,22 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "iSortCol_0" => 0,
             "sSortDir_0" => "desc"
         ));
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(new UserModel());
-        
+
         $datatable->columns(array(
             "first_name",
             "last_name"
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         $this->assertEquals("Englebert", $data->aaData[0][0]);
     }
     
@@ -101,22 +114,22 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "iSortCol_0" => 0,
             "sSortDir_0" => "desc"
         ));
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(DB::table('users'));
-        
+
         $datatable->columns(array(
             "first_name",
             "last_name"
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         $this->assertEquals("Englebert", $data->aaData[0][0]);
     }
     
@@ -128,7 +141,7 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "iSortCol_0" => 0,
             "sSortDir_0" => "asc"
         ));
-        
+
         $expected = array(
             "Barry Evans",
             "Barry Manilow",
@@ -136,22 +149,22 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "Barry White",
             "Barry Williams"
         );
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(with(new UserModel())->where('first_name', '=', 'Barry'));
-        
+
         $datatable->columns(array(
             array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
             array("id")
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         for ($i = 0; $i < count($data->aaData); $i++)
         {
             $this->assertEquals($expected[$i], $data->aaData[$i][0]);
@@ -166,7 +179,7 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "iSortCol_0" => 0,
             "sSortDir_0" => "asc"
         ));
-        
+
         $expected = array(
             "Barry Evans",
             "Barry Manilow",
@@ -174,22 +187,22 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "Barry White",
             "Barry Williams"
         );
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(DB::table('users')->where('first_name', '=', 'Barry'));
-        
+
         $datatable->columns(array(
             array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
             array("id")
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         for ($i = 0; $i < count($data->aaData); $i++)
         {
             $this->assertEquals($expected[$i], $data->aaData[$i][0]);
@@ -204,7 +217,7 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "iSortCol_0" => 0,
             "sSortDir_0" => "desc"
         ));
-        
+
         $expected = array(
             "Barry Evans",
             "Barry Manilow",
@@ -212,28 +225,28 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "Barry White",
             "Barry Williams"
         );
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(with(new UserModel())->where('first_name', '=', 'Barry'));
-        
+
         $datatable->columns(array(
             array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
             array("id")
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         for ($i = 0; $i < count($data->aaData); $i++)
         {
             $this->assertEquals($expected[4 - $i], $data->aaData[$i][0]);
         }
     }
-    
+
     public function testMultipleFieldsAreSortedDescendingUsingQueryBuilder()
     {
         $testData = array_merge($this->testData, array(
@@ -242,7 +255,7 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "iSortCol_0" => 0,
             "sSortDir_0" => "desc"
         ));
-        
+
         $expected = array(
             "Barry Evans",
             "Barry Manilow",
@@ -250,22 +263,22 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "Barry White",
             "Barry Williams"
         );
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(DB::table('users')->where('first_name', '=', 'Barry'));
-        
+
         $datatable->columns(array(
             array("first_name", "last_name", array("combine" => "first_name,last_name, ")),
             array("id")
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         for ($i = 0; $i < count($data->aaData); $i++)
         {
             $this->assertEquals($expected[4 - $i], $data->aaData[$i][0]);
@@ -279,22 +292,22 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "bSearchable_1" => false,
             "sSearch" => "Barry"
         ));
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(new UserModel());
-        
+
         $datatable->columns(array(
             "first_name",
             "last_name"
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         $this->assertCount(5, $data->aaData);
     }
     
@@ -305,58 +318,57 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "bSearchable_1" => false,
             "sSearch" => "Barry"
         ));
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(DB::table('users'));
-        
+
         $datatable->columns(array(
             "first_name",
             "last_name"
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         $this->assertCount(5, $data->aaData);
     }
     
     public function testTableJoinsReturnCorrectData()
     {
         $this->app['request']->replace($this->testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(DB::table('users')
             ->select(DB::raw('users.*, group_concat(roles.role) as role'))
             ->join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->groupBy('users.id')
         );
-            
+
         $datatable->columns(array(
             "first_name",
             "role"
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         $this->assertCount(6, $data->aaData);
         $this->assertEquals(6, $data->iTotalRecords);
         $this->assertEquals(6, $data->iTotalDisplayRecords);
-        
-        foreach($data->aaData as $data) 
+
+        foreach ($data->aaData as $data)
         {
             $this->assertTrue($data[1] === "admin" || $data[1] === 'user' || $data[1] === 'admin,user');
         }
     }
-    
-    
+
     public function testTableJoinsAllowSortingByJoinedValuesAscending()
     {
         $testData = array_merge($this->testData, array(
@@ -365,32 +377,32 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "iSortCol_0" => 1,
             "sSortDir_0" => "asc"
         ));
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(DB::table('users')
             ->select(DB::raw('users.*, group_concat(roles.role) as role'))
             ->join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->groupBy('users.id')
         );
-            
+
         $datatable->columns(array(
             "first_name",
             "role"
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         $this->assertCount(6, $data->aaData);
         $this->assertEquals(6, $data->iTotalRecords);
         $this->assertEquals(6, $data->iTotalDisplayRecords);
-        
-        foreach($data->aaData as $key => $data) 
+
+        foreach ($data->aaData as $key => $data)
         {
             if ($key <= 1)
                 $this->assertTrue($data[1] === "admin,user");
@@ -407,74 +419,32 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
             "iSortCol_0" => 1,
             "sSortDir_0" => "desc"
         ));
-        
+
         $this->app['request']->replace($testData);
-        
+
         $datatable = $this->getDatatable();
-        
+
         $datatable->query(DB::table('users')
             ->select(DB::raw('users.*, group_concat(roles.role) as role'))
             ->join('role_user', 'users.id', '=', 'role_user.user_id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->groupBy('users.id')
         );
-            
+
         $datatable->columns(array(
             "first_name",
             "role"
         ));
-        
+
         $result = $datatable->result();
-        
+
         $data = json_decode($result->getContent());
-        
+
         $this->assertCount(6, $data->aaData);
         $this->assertEquals(6, $data->iTotalRecords);
         $this->assertEquals(6, $data->iTotalDisplayRecords);
-        
-        foreach($data->aaData as $key => $data) 
-        {
-            if ($key >= 4)
-                $this->assertTrue($data[1] === "admin,user");
-            else
-                $this->assertTrue($data[1] === 'user');
-        }
-    }
-    
-	public function testTableJoinsAllowSearchingByJoinedValues()
-    {
-        $testData = array_merge($this->testData, array(
-            "bSearchable_1" => true,
-            "sSearch" => "admi"
-        ));
-        
-        $this->app['request']->replace($testData);
-        
-        $datatable = $this->getDatatable();
-        
-        $datatable->query(DB::table('users')
-            ->select(DB::raw('users.*, group_concat(roles.role) as role'))
-            ->join('role_user', 'users.id', '=', 'role_user.user_id')
-            ->join('roles', 'role_user.role_id', '=', 'roles.id')
-            ->groupBy('users.id')
-        );
-            
-        $datatable->columns(array(
-            "first_name",
-            "role"
-        ));
-        
-        $result = $datatable->result();
-		
-		//dd($this->getProperty($this->getProperty($datatable, "driver"), "builders")[1]->toSql());
-        
-        $data = json_decode($result->getContent());
-        
-        $this->assertCount(2, $data->aaData);
-        $this->assertEquals(6, $data->iTotalRecords);
-        $this->assertEquals(2, $data->iTotalDisplayRecords);
-        
-        foreach($data->aaData as $key => $data) 
+
+        foreach ($data->aaData as $key => $data)
         {
             if ($key >= 4)
                 $this->assertTrue($data[1] === "admin,user");
@@ -483,16 +453,45 @@ class LaravelDriverModuleTests extends DatatablesTestCase {
         }
     }
 
-    private function getDatatable()
+    public function testTableAllowsEagerLoadedRelationshipsToDisplay()
     {
-        return new Daveawb\Datatables\Datatable(
-            new Daveawb\Datatables\Columns\Factory(
-                new Daveawb\Datatables\Columns\Input\OneNineInput($this->app['request']),
-                $this->app['validator']
-            ),
-            new Daveawb\Datatables\Drivers\Laravel,
-            new Illuminate\Http\JsonResponse,
-            $this->app['config']
-        );
+        $testData = array_merge($this->testData, array(
+            "bSortable_0" => false,
+            "bSortable_1" => true,
+            "iSortCol_0" => 1,
+            "sSortDir_0" => "desc"
+        ));
+
+        $this->app['request']->replace($testData);
+
+        $datatable = $this->getDatatable();
+
+        $datatable->query(with(new UserModel())->with('content'));
+
+        $datatable->columns(array(
+            "first_name",
+            "content.0.title"
+        ));
+
+        $result = $datatable->result();
+
+        $data = json_decode($result->getContent());
+
+        $this->assertCount(6, $data->aaData);
+        $this->assertEquals(6, $data->iTotalRecords);
+        $this->assertEquals(6, $data->iTotalDisplayRecords);
+
+        $count = 0;
+
+        foreach ($data->aaData as $key => $data)
+        {
+            if (isset($data[1]))
+            {
+                $count++;
+                $this->assertStringMatchesFormat('%s', $data[1]);
+            }
+        }
+
+        $this->assertGreaterThan(1, $count);
     }
 }
