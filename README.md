@@ -1,4 +1,5 @@
-> This package is no longer maintained. [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+[![Deprecated](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+> Notice: This package is deprecated and no longer maintained.
 
 Laravel-Datatables (Deprecated as of Laravel 5)
 ==================
