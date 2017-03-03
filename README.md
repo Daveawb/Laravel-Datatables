@@ -1,6 +1,6 @@
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+> This package is no longer maintained. [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
-Laravel-Datatables 
+Laravel-Datatables (Deprecated as of Laravel 5)
 ==================
 
 [![Build Status](https://travis-ci.org/Daveawb/Laravel-Datatables.svg?branch=development)](https://travis-ci.org/Daveawb/Laravel-Datatables) [![Coverage Status](https://coveralls.io/repos/Daveawb/Laravel-Datatables/badge.png?branch=development)](https://coveralls.io/r/Daveawb/Laravel-Datatables?branch=development)
